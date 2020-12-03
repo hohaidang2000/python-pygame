@@ -146,7 +146,7 @@ class Player(pg.sprite.Sprite):
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
         pos = self.pos + vec(18, 13).rotate(-self.rot)
-        self.gun.follow(pos, dir, self.rot)
+        self.gun.follow(pos,  self.rot)
 
         #self.gun_rect = self.gun_img.get_rect()
         #self.gun_rect.center = (90, 100)
@@ -320,12 +320,13 @@ class Gun(pg.sprite.Sprite):
 
         self.vel = vec(0, 0)
         self.pos = vec(pos)
+        self.rect.center = pos
         self.rot = 0
 
 
-        self.rect.center = pos
 
-    def follow(self,pos,dir,rot):
+
+    def follow(self,pos,rot):
         self.image=pg.transform.rotate(self.game.player_gun_img.copy(), rot)
         self.rect = self.image.get_rect()
         self.rect.center = vec(pos.x,pos.y)
