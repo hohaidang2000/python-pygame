@@ -2,7 +2,7 @@ import pygame as pg
 import  sys
 import random
 from settings import *
-from sprites import  *
+from sprite import  *
 from  os import path
 from tilemap import *
 
@@ -77,6 +77,7 @@ class Game:
 
         self.player_img = pg.image.load(img_folder+"/player/"+ PLAYER_IMAGE).convert_alpha()
         self.player_gun = "weapon_gun.png"
+        self.player_gun_img = pg.image.load(img_folder+"/weapons/"+self.player_gun).convert_alpha()
 
         self.mob_img = pg.image.load(img_folder+"/mobs/"+MOB_IMG).convert_alpha()
         self.bullet_images = {}
@@ -222,7 +223,9 @@ class Game:
         for sprite in self.all_sprites:
             if isinstance(sprite, Mob):
                 sprite.draw_health()
+
             self.screen.blit(sprite.image,self.camera.apply(sprite))
+
 
 
 

@@ -42,11 +42,11 @@ PLAYER_HEALTH = 100
 BULLET_IMG = '/bullet.png'
 WEAPONS = {}
 WEAPONS['pistol'] = {'bullet_speed': 500,
-                     'bullet_lifetime': 1000,
+                     'bullet_lifetime': 10000,
                      'rate': 250,
                      'kickback': 200,
                      'spread': 5,
-                     'damage': 100,
+                     'damage': 10,
                      'bullet_size': 'lg',
                      'bullet_count': 1}
 WEAPONS['shotgun'] = {'bullet_speed': 400,

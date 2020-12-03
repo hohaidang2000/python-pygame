@@ -38,9 +38,10 @@ class Player(pg.sprite.Sprite):
         self.game = game
         self.image = game.player_img
 
+
         self.rect = self.image.get_rect()
-        self.gun_img = game.player_gun
-        self.gun_rect = self.gun_img.get_rect()
+
+
 
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
@@ -50,10 +51,13 @@ class Player(pg.sprite.Sprite):
 
         self.health = PLAYER_HEALTH
         self.rect.center = (x, y)
-        self.gun_rect.center = (x+10,y)
+
         self.weapon = 'pistol'
         self.last_shot = - WEAPONS[self.weapon]['rate']
         self.damaged = False
+        pos = self.pos + vec(18, 13).rotate(-self.rot)
+
+        self.gun = Gun(self.game,pos)
     def get_angle(self, mouse):
         """
         Find the new angle between the center of the Turret and the mouse.
@@ -122,7 +126,7 @@ class Player(pg.sprite.Sprite):
 
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
         self.image = pg.transform.rotate(self.game.player_img, self.rot)
-        self.gun_img = pg.transform.rotate(self.game.player_gun, self.rot)
+        #self.gun_img = pg.transform.rotate(self.game.player_gun_img, self.rot)
         # self.image = pg.transform.rotate(self.game.player_img, self.angle)
         if self.damaged:
             try:
@@ -134,11 +138,18 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
+
+
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.walls, 'x')
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+        pos = self.pos + vec(18, 13).rotate(-self.rot)
+        self.gun.follow(pos, dir, self.rot)
+
+        #self.gun_rect = self.gun_img.get_rect()
+        #self.gun_rect.center = (90, 100)
 
 
 class Mob(pg.sprite.Sprite):
@@ -292,3 +303,30 @@ class Item(pg.sprite.Sprite):
         if self.step > BOB_RANGE:
             self.step = 0
             self.dir *= -1
+
+class Gun(pg.sprite.Sprite):
+    def __init__(self, game, pos, angle=0):
+        self.groups = game.all_sprites
+        self._layer = PLAYER_LAYER
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.player_gun_img
+
+
+        self.rect = self.image.get_rect()
+
+
+
+
+        self.vel = vec(0, 0)
+        self.pos = vec(pos)
+        self.rot = 0
+
+
+        self.rect.center = pos
+
+    def follow(self,pos,dir,rot):
+        self.image=pg.transform.rotate(self.game.player_gun_img.copy(), rot)
+        self.rect = self.image.get_rect()
+        self.rect.center = vec(pos.x,pos.y)
+
