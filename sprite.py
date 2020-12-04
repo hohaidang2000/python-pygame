@@ -96,6 +96,7 @@ class Player(pg.sprite.Sprite):
             self.get_angle(mouse.get_pos())
         if moBut[0]:#left click
             self.shoot()
+
     def shoot(self):
         now = pg.time.get_ticks()
         if now - self.last_shot > WEAPONS[self.weapon]['rate']:
@@ -145,11 +146,11 @@ class Player(pg.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
-        pos = self.pos + vec(18, 13).rotate(-self.rot)
-        self.gun.follow(pos,  self.rot)
+        # use hit_rect.center instead of pos because of the line above
+        self.gun.follow(self.hit_rect.center, self.rot)
 
-        #self.gun_rect = self.gun_img.get_rect()
-        #self.gun_rect.center = (90, 100)
+
+
 
 
 class Mob(pg.sprite.Sprite):
@@ -319,15 +320,24 @@ class Gun(pg.sprite.Sprite):
 
 
         self.vel = vec(0, 0)
-        self.pos = vec(pos)
-        self.rect.center = pos
+        self.pos = pos + vec(20,12)
+        self.rect.center = pos + vec(20,12)
         self.rot = 0
 
 
 
 
     def follow(self,pos,rot):
-        self.image=pg.transform.rotate(self.game.player_gun_img.copy(), rot)
-        self.rect = self.image.get_rect()
-        self.rect.center = vec(pos.x,pos.y)
 
+        self.rot = rot%360
+        self.pos = pos + vec(20,12).rotate(-rot)
+
+
+
+
+
+    def update(self):
+
+        self.image = pg.transform.rotate(self.game.player_gun_img.copy(), self.rot)
+        self.rect = self.image.get_rect()
+        self.rect.center = self.pos

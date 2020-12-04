@@ -46,9 +46,10 @@ WEAPONS['pistol'] = {'bullet_speed': 500,
                      'rate': 250,
                      'kickback': 200,
                      'spread': 5,
-                     'damage': 10,
+                     'damage': 100,
                      'bullet_size': 'lg',
-                     'bullet_count': 1}
+                     'bullet_count': 1,
+                     'weapon_img':'weapon_gun.png'}
 WEAPONS['shotgun'] = {'bullet_speed': 400,
                       'bullet_lifetime': 500,
                       'rate': 900,
@@ -56,7 +57,8 @@ WEAPONS['shotgun'] = {'bullet_speed': 400,
                       'spread': 20,
                       'damage': 5,
                       'bullet_size': 'sm',
-                      'bullet_count': 12}
+                      'bullet_count': 12,
+                      'weapon_img':'weapon_gun.png'}
 
 # Mob
 MOB_IMG = "zoimbie1_hold.png"
