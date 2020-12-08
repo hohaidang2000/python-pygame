@@ -52,17 +52,20 @@ class Player(pg.sprite.Sprite):
         self.health = PLAYER_HEALTH
         self.rect.center = (x, y)
 
-        self.weapon = 'pistol'
+        self.weapon = 'shotgun'
         self.last_shot = - WEAPONS[self.weapon]['rate']
         self.damaged = False
         pos = self.pos + vec(18, 13).rotate(-self.rot)
 
         self.gun = Gun(self.game,pos)
 
-        self.bullet_count = 1
-        self.max_bullets = 1
-        self.megazine = 5
+        self.weaponchange()
         self.reload = 0
+    def weaponchange(self):
+        self.bullet_in_chamber = WEAPONS[self.weapon]['max_bullets']
+        self.max_bullets = WEAPONS[self.weapon]['max_bullets']
+        self.megazine = WEAPONS[self.weapon]['left']
+
     def get_angle(self, mouse):
         """
         Find the new angle between the center of the Turret and the mouse.
@@ -101,8 +104,8 @@ class Player(pg.sprite.Sprite):
         if mouse:
 
             self.get_angle(mouse.get_pos())
-        if moBut[0] and self.bullet_count > 0:#left click
-            print(self.bullet_count,self.megazine)
+        if moBut[0] and self.bullet_in_chamber > 0:#left click
+
 
             self.shoot()
 
@@ -121,12 +124,13 @@ class Player(pg.sprite.Sprite):
                 spred = uniform(-WEAPONS[self.weapon]['spread'],WEAPONS[self.weapon]['spread'])
                 Bullet(self.game, pos, dir.rotate(spred), WEAPONS[self.weapon]['damage'])
 
-                self.bullet_count -= 1
+
 
                 snd = choice(self.game.weapon_sounds[self.weapon])
                 if snd.get_num_channels() > 2:
                     snd.stop()
                 snd.play()
+            self.bullet_in_chamber -= 1
             MuzzleFlash(self.game, pos)
 
     def add_health(self, amount):
@@ -165,13 +169,14 @@ class Player(pg.sprite.Sprite):
         self.gun.follow(self.hit_rect.center, self.rot)
 
         if self.reload == 1:
-            if self.bullet_count < self.max_bullets:
+            if self.bullet_in_chamber < self.max_bullets:
                 if self.megazine >= self.max_bullets:
-                    self.bullet_count += int(self.max_bullets)
+                    self.bullet_in_chamber += int(self.max_bullets)
                     self.megazine -= int(self.max_bullets)
                 else:
-                    self.bullet_count += int(self.megazine)
+                    self.bullet_in_chamber += int(self.megazine)
                     self.megazine = 0
+
         self.reload = 0
 
 
