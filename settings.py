@@ -26,7 +26,8 @@ GRIDHEIGHT = HEIGHT / TILESIZE
 # WALL_IMG
 WALL_IMG = "/Tiles/tile_538.png"
 
-
+# level
+level = {1:'level1.tml',2:'level2.tml',}
 # Player setttings
 
 PLAYER_SPEED = 300

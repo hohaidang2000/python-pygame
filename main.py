@@ -36,6 +36,7 @@ class Game:
         self.clock = pg.time.Clock()
         #pg.key.set_repeat(500,100)
         self.running = True
+        self.level = 1
         self.load_data()
 
     def draw_text(self, text, font_name, size, color, x, y, align="nw"):
@@ -119,10 +120,11 @@ class Game:
         self.zombie_hit_sounds = []
         for snd in ZOMBIE_HIT_SOUNDS:
             self.zombie_hit_sounds.append(pg.mixer.Sound(snd_folder + "/" + snd))
+        self.map = TiledMap(self.map_folder + "/level1.tmx")
 
     def new(self):
         #reset the game
-        self.map = TiledMap(self.map_folder + "/level1.tmx")
+
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         self.all_sprites = pg.sprite.LayeredUpdates()
@@ -169,7 +171,10 @@ class Game:
         self.camera.update(self.player)
         # game over
         if len(self.mobs) == 0 :
-            self.playing = False
+            self.next_screen()
+            self.map = TiledMap(self.map_folder + "/level2.tmx")
+            self.level+=1
+
         # player hit item
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
@@ -189,7 +194,8 @@ class Game:
             self.player.health -= MOB_DAMAGE
             hit.vel = vec(0,0)
             if self.player.health <= 0:
-                self.playing = False
+                self.show_go_screen()
+
         if hits:
             self.player.hit()
             self.player.pos += vec(MOB_KNOCKBACK,0).rotate(-hits[0].rot)
@@ -242,10 +248,37 @@ class Game:
 
 
     def show_start_screen(self):
+        self.screen.fill(BLACK)
+        level ="level " + str(self.level)
+        self.draw_text("Start", self.title_font,
+                       100, RED, WIDTH / 2,  HEIGHT*1/4, align="center")
+        self.draw_text(level, self.title_font,
+                       75, RED, WIDTH / 2, HEIGHT /2, align="center")
+        self.draw_text("Press a key to begin", self.title_font,
+                       75, WHITE, WIDTH / 2, HEIGHT* 3/4 , align="center")
+        pg.display.flip()
 
-        pass
+        self.wait_for_key()
+
+    def next_screen(self):
+        self.playing = False
+        pg.event.wait()
+        self.screen.fill(BLACK)
+        level = "level " + str(self.level)
+        self.draw_text("Start", self.title_font,
+                       100, RED, WIDTH / 2, HEIGHT * 1 / 4, align="center")
+        self.draw_text(level, self.title_font,
+                       75, RED, WIDTH / 2, HEIGHT / 2, align="center")
+        self.draw_text("Press a key to begin", self.title_font,
+                       75, WHITE, WIDTH / 2, HEIGHT * 3 / 4, align="center")
+        pg.display.flip()
+        waiting = True
+
+        self.wait_for_key()
 
     def show_go_screen(self):
+        self.playing = False
+        pg.event.wait()
         self.screen.fill(BLACK)
         self.draw_text("GAME OVER", self.title_font,
                        100, RED, WIDTH/2, HEIGHT/2, align="center")
@@ -278,7 +311,7 @@ g.show_start_screen()
 while True :
     g.new()
     g.run()
-    g.show_go_screen()
+    #g.show_go_screen()
 
 g.quit()
 
