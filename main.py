@@ -37,6 +37,7 @@ class Game:
         #pg.key.set_repeat(500,100)
         self.running = True
         self.level = 1
+        self.LEVEL = LEVEL
 
         self.load_data()
 
@@ -125,8 +126,8 @@ class Game:
 
     def new(self):
         #reset the game
-        if self.level == 1:
-            self.map = TiledMap(self.map_folder + "/level1.tmx")
+
+        self.map = TiledMap(self.map_folder + "/"+self.LEVEL[self.level])
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         self.all_sprites = pg.sprite.LayeredUpdates()
@@ -176,8 +177,10 @@ class Game:
         if len(self.mobs) == 0 :
             self.playing = False
             pg.event.wait()# try to fix the quick start maybe i should add a timer
-            self.map = TiledMap(self.map_folder + "/level2.tmx")
+
             self.level+=1
+            if self.level == len(LEVEL):
+                self.level = 1
             self.next_screen()
         # player hit item
 
@@ -218,7 +221,7 @@ class Game:
                     print(radius.length())
                     if 0<=abs(radius.length()) < 200:
                         mob.health -= WEAPONS[self.player.weapon]['damage']
-
+                        mob.hit = 1
             else:
                 for bullet in hits[mob]:
                     mob.health -= bullet.damage

@@ -28,7 +28,7 @@ WALL_IMG = "/Tiles/tile_538.png"
 
 # level
 
-LEVEL = [0,'level1.tmx','level2.tmx','level3.tmx']
+LEVEL = [0,'level1.tmx','level2.tmx']
 
 # Player setttings
 
@@ -72,7 +72,7 @@ WEAPONS['bazuka'] = {'bullet_speed': 400,
                       'rate': 900,
                       'kickback': 1000,
                       'spread': 0,
-                      'damage': 999,
+                      'damage': 55,
                       'bullet_size': 'lg',
                       'bullet_count': 1,
                       'weapon_img':'weapon_gun.png',
