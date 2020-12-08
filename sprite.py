@@ -52,7 +52,7 @@ class Player(pg.sprite.Sprite):
         self.health = PLAYER_HEALTH
         self.rect.center = (x, y)
 
-        self.weapon = 'bazuka'
+        self.weapon = 'pistol'
         self.last_shot = - WEAPONS[self.weapon]['rate']
         self.damaged = False
         pos = self.pos + vec(18, 13).rotate(-self.rot)
@@ -210,6 +210,15 @@ class Mob(pg.sprite.Sprite):
                 if 0< dist.length() < AVOID_RADIUS:
                     self.acc += dist.normalize()
 
+    def follow_the_damaged(self):
+        for mob in self.game.mobs:
+            if mob != self:
+                dist = self.pos - mob.pos
+                if mob.hit == 1 and  0< dist.length() < 75:
+                    self.hit = 1
+
+
+
     def update(self):
         target_dist = self.target.pos - self.pos
         if target_dist.length_squared() < DETECT_RADIUS**2 or self.hit == 1:
@@ -233,7 +242,7 @@ class Mob(pg.sprite.Sprite):
             self.hit_rect.centery = self.pos.y
             collide_with_walls(self, self.game.walls, 'y')
             self.rect.center = self.hit_rect.center
-
+        self.follow_the_damaged()
         if self.health <=0:
             choice(self.game.zombie_hit_sounds).play()
             self.game.map_img.blit(self.game.splat, self.pos - vec(32,32))

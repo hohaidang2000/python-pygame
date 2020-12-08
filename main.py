@@ -212,19 +212,26 @@ class Game:
         check = 0
         for mob in hits:
             #hit.health -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
+            if check == 0:
+                pos = vec(mob.pos)
+                check = 1
             if self.player.weapon =='bazuka':
-                if check == 0:
-                    pos = vec(mob.pos)
-                    check =1
+
                 for mob in self.mobs:
                     radius =mob.pos - pos
-                    print(radius.length())
+
                     if 0<=abs(radius.length()) < 200:
                         mob.health -= WEAPONS[self.player.weapon]['damage']
                         mob.hit = 1
             else:
                 for bullet in hits[mob]:
                     mob.health -= bullet.damage
+                for mob in self.mobs:
+                    radius = mob.pos - pos
+
+                    if 0 <= abs(radius.length()) < 70 : # follow the sound
+                        mob.hit = 1
+
                 mob.vel = vec(0,0)
                 mob.hit = 1
 
