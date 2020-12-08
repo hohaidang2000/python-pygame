@@ -44,11 +44,11 @@ PLAYER_HEALTH = 100
 # Weapon settings
 BULLET_IMG = '/bullet.png'
 WEAPONS = {}
-WEAPONS['pistol'] = {'bullet_speed': 500,
-                     'bullet_lifetime': 10000,
-                     'rate': 250,
-                     'kickback': 200,
-                     'spread': 5,
+WEAPONS['pistol'] = {'bullet_speed': 500,#how fast the bullet go
+                     'bullet_lifetime': 10000,#how long it exists
+                     'rate': 250,# how fast can you shoot it
+                     'kickback': 200,# push back
+                     'spread': 5,# accuracy
                      'damage': 100,
                      'bullet_size': 'lg',
                      'bullet_count': 1,
@@ -64,6 +64,17 @@ WEAPONS['shotgun'] = {'bullet_speed': 400,
                       'damage': 5,
                       'bullet_size': 'sm',
                       'bullet_count': 12,
+                      'weapon_img':'weapon_gun.png',
+                      'max_bullets': 4,
+                      'left': 30}
+WEAPONS['bazuka'] = {'bullet_speed': 400,
+                      'bullet_lifetime':999999,
+                      'rate': 900,
+                      'kickback': 1000,
+                      'spread': 0,
+                      'damage': 999,
+                      'bullet_size': 'lg',
+                      'bullet_count': 1,
                       'weapon_img':'weapon_gun.png',
                       'max_bullets': 1,
                       'left': 30}
@@ -110,7 +121,8 @@ ZOMBIE_MOAN_SOUNDS = ['brains2.wav', 'brains3.wav', 'zombie-roar-1.wav', 'zombie
                       'zombie-roar-3.wav', 'zombie-roar-5.wav', 'zombie-roar-6.wav', 'zombie-roar-7.wav']
 ZOMBIE_HIT_SOUNDS = ['splat-15.wav']
 WEAPON_SOUNDS = {'pistol': ['pistol.wav'],
-                 'shotgun': ['shotgun.wav']}
+                 'shotgun': ['shotgun.wav'],
+                 'bazuka':['shotgun.wav']}
 EFFECTS_SOUNDS = {'level_start': 'level_start.wav',
                   'health_up': 'health_pack.wav',
                   'gun_pickup': 'gun_pickup.wav'}

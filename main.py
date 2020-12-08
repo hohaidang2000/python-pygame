@@ -5,8 +5,8 @@ from settings import *
 from sprite import  *
 from  os import path
 from tilemap import *
-
-
+vec = pg.math.Vector2
+import math
 # HUD function
 def draw_player_health(surf, x, y, pct):
     if pct <0:
@@ -171,13 +171,16 @@ class Game:
 
         self.all_sprites.update()
         self.camera.update(self.player)
+
         # game over
         if len(self.mobs) == 0 :
             self.playing = False
+            pg.event.wait()# try to fix the quick start maybe i should add a timer
             self.map = TiledMap(self.map_folder + "/level2.tmx")
             self.level+=1
             self.next_screen()
         # player hit item
+
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
             if hit.type == 'health' and self.player.health < PLAYER_HEALTH:
@@ -188,6 +191,7 @@ class Game:
                 hit.kill()
                 self.effects_sounds['gun_pickup'].play()
                 self.player.weapon = 'shotgun'
+                self.player.weaponchange()
         # mob hit player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits :
@@ -202,12 +206,24 @@ class Game:
             self.player.hit()
             self.player.pos += vec(MOB_KNOCKBACK,0).rotate(-hits[0].rot)
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
+        check = 0
         for mob in hits:
             #hit.health -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
-            for bullet in hits[mob]:
-                mob.health -= bullet.damage
-            mob.vel = vec(0,0)
-            mob.hit = 1
+            if self.player.weapon =='bazuka':
+                if check == 0:
+                    pos = vec(mob.pos)
+                    check =1
+                for mob in self.mobs:
+                    radius =mob.pos - pos
+                    print(radius.length())
+                    if 0<=abs(radius.length()) < 200:
+                        mob.health -= WEAPONS[self.player.weapon]['damage']
+
+            else:
+                for bullet in hits[mob]:
+                    mob.health -= bullet.damage
+                mob.vel = vec(0,0)
+                mob.hit = 1
 
     def events(self):
         for event in pg.event.get():

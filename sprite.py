@@ -52,7 +52,7 @@ class Player(pg.sprite.Sprite):
         self.health = PLAYER_HEALTH
         self.rect.center = (x, y)
 
-        self.weapon = 'pistol'
+        self.weapon = 'bazuka'
         self.last_shot = - WEAPONS[self.weapon]['rate']
         self.damaged = False
         pos = self.pos + vec(18, 13).rotate(-self.rot)
