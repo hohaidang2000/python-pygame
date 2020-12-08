@@ -2,6 +2,7 @@ import pygame as pg
 import  sys
 import random
 from settings import *
+
 from sprite import  *
 from  os import path
 from tilemap import *
@@ -125,8 +126,8 @@ class Game:
 
     def new(self):
         #reset the game
-        if self.level == 1:
-            self.map = TiledMap(self.map_folder + "/level1.tmx")
+
+        self.map = TiledMap(self.map_folder +"/"+ LEVEL[self.level])
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         self.all_sprites = pg.sprite.LayeredUpdates()
@@ -174,9 +175,14 @@ class Game:
         # game over
         if len(self.mobs) == 0 :
             self.playing = False
-            self.map = TiledMap(self.map_folder + "/level2.tmx")
-            self.level+=1
-            self.next_screen()
+            if self.level == len(LEVEL)-1:
+                self.level = 1
+                self.playing = False
+                self.show_start_screen()
+
+            else:
+                self.level+=1
+                self.next_screen()
         # player hit item
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
@@ -197,6 +203,7 @@ class Game:
             hit.vel = vec(0,0)
             if self.player.health <= 0:
                 self.playing = False
+
                 self.show_go_screen()
         if hits:
             self.player.hit()
