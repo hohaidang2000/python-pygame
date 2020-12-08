@@ -2,7 +2,6 @@ import pygame as pg
 import  sys
 import random
 from settings import *
-
 from sprite import  *
 from  os import path
 from tilemap import *
@@ -126,9 +125,8 @@ class Game:
 
     def new(self):
         #reset the game
-
-        self.map = TiledMap(self.map_folder +"/"+ LEVEL[self.level])
-
+        if self.level == 1:
+            self.map = TiledMap(self.map_folder + "/level1.tmx")
         self.map_img = self.map.make_map()
         self.map_rect = self.map_img.get_rect()
         self.all_sprites = pg.sprite.LayeredUpdates()
@@ -173,21 +171,12 @@ class Game:
 
         self.all_sprites.update()
         self.camera.update(self.player)
-
-
-        # NEXT LEVEL
+        # game over
         if len(self.mobs) == 0 :
             self.playing = False
-            if self.level == len(LEVEL)-1:
-                self.level = 1
-                self.playing = False
-                self.show_start_screen()
-
-            else:
-                self.level+=1
-                self.next_screen()
-
-
+            self.map = TiledMap(self.map_folder + "/level2.tmx")
+            self.level+=1
+            self.next_screen()
         # player hit item
         hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
@@ -199,7 +188,6 @@ class Game:
                 hit.kill()
                 self.effects_sounds['gun_pickup'].play()
                 self.player.weapon = 'shotgun'
-                self.player.weaponchange()
         # mob hit player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits :
@@ -209,7 +197,6 @@ class Game:
             hit.vel = vec(0,0)
             if self.player.health <= 0:
                 self.playing = False
-
                 self.show_go_screen()
         if hits:
             self.player.hit()
