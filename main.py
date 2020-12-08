@@ -241,7 +241,8 @@ class Game:
         draw_player_health(self.screen, 10,10,self.player.health / PLAYER_HEALTH)
         self.draw_text('Zombie: {}'.format(len(self.mobs)), self.hud_font, 30, WHITE,
                        WIDTH -10, 10, align="ne")
-
+        self.draw_text('{} / {}'.format(self.player.bullet_in_chamber,self.player.megazine),self.hud_font,30, WHITE,
+                       WIDTH/4, 0, align="ne")
         if self.pause:
             self.screen.blit(self.dim_image,(0,0))
             self.draw_text("Paused", self.title_font, 105, RED, WIDTH/2, HEIGHT/2, align="center")
