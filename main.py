@@ -176,7 +176,7 @@ class Game:
         # game over
         if len(self.mobs) == 0 :
             self.playing = False
-            pg.event.wait()# try to fix the quick start maybe i should add a timer
+            # try to fix the quick start maybe i should add a timer
 
             self.level+=1
             if self.level == len(LEVEL):
@@ -286,11 +286,11 @@ class Game:
         self.draw_text("Press a key to begin", self.title_font,
                        75, WHITE, WIDTH / 2, HEIGHT* 3/4 , align="center")
         pg.display.flip()
-
+        pg.event.wait()
         self.wait_for_key()
 
     def next_screen(self):
-        pg.event.wait()
+
         self.screen.fill(BLACK)
         level = "level " + str(self.level)
         self.draw_text("Start", self.title_font,
@@ -301,18 +301,18 @@ class Game:
                        75, WHITE, WIDTH / 2, HEIGHT * 3 / 4, align="center")
         pg.display.flip()
 
-
+        pg.event.wait()
         self.wait_for_key()
 
     def show_go_screen(self):
-        pg.event.wait()
+
         self.screen.fill(BLACK)
         self.draw_text("GAME OVER", self.title_font,
                        100, RED, WIDTH/2, HEIGHT/2, align="center")
         self.draw_text("Press a key to start", self.title_font,
                        75, WHITE, WIDTH / 2, HEIGHT *3 / 4, align="center")
         pg.display.flip()
-
+        pg.event.wait()
         self.wait_for_key()
 
     def wait_for_key(self):
