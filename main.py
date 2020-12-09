@@ -225,31 +225,35 @@ class Game:
 
         for mob in hits:
             #hit.health -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
+
             if check == 0:
                 pos = vec(mob.pos)
                 check = 1
-            if self.player.weapon_list[self.player.currence_weapon]=='bazuka':
-                expl = Explosion(mob.rect.center, 'lg', self.explosion_anin)
-                self.all_sprites.add(expl)
-                for mob in self.mobs:
-                    radius =mob.pos - pos
 
-                    if 0<=abs(radius.length()) < 100:
-                        mob.health -= WEAPONS[self.player.weapon_list[self.player.currence_weapon]]['damage']
-                        mob.hit = 1
-            else:
 
-                for bullet in hits[mob]:
+
+            for bullet in hits[mob]:
+                if bullet.damage == 555:
+                    expl = Explosion(mob.rect.center, 'lg', self.explosion_anin)
+                    self.all_sprites.add(expl)
+
+                    for mob in self.mobs:
+                        radius = mob.pos - pos
+
+                        if 0 <= abs(radius.length()) < 100:
+                            mob.health -= bullet.damage
+                            mob.hit = 1
+                else:
                     mob.health -= bullet.damage
 
-                for mob in self.mobs:
-                    radius = mob.pos - pos
+                    for mob in self.mobs:
+                        radius = mob.pos - pos
 
-                    if 0 <= abs(radius.length()) < 70 : # follow the sound
-                        mob.hit = 1
+                        if 0 <= abs(radius.length()) < 70 : # follow the sound
+                            mob.hit = 1
 
-                mob.vel = vec(0,0)
-                mob.hit = 1
+            mob.vel = vec(0,0)
+            mob.hit = 1
 
     def events(self):
         for event in pg.event.get():
