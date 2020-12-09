@@ -408,3 +408,30 @@ class Gun(pg.sprite.Sprite):
         self.image = pg.transform.rotate(self.game.player_gun_img.copy(), self.rot)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
+
+
+class Explosion(pg.sprite.Sprite):
+    def __init__(self, center, size, explosion_anin):
+        self._layer = 4
+        pg.sprite.Sprite.__init__(self)
+        self.size = size
+        self.image = explosion_anin[self.size][0]
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.frame_now = 0
+        self.last_update = pg.time.get_ticks()
+        self.frame_rate = 35
+        self.explosion_anin = explosion_anin
+
+    def update(self):
+        now = pg.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame_now += 1
+            if self.frame_now == len(self.explosion_anin[self.size]):
+                self.kill()
+            else:
+                center = self.rect.center
+                self.image = self.explosion_anin[self.size][self.frame_now]
+                self.rect = self.image.get_rect()
+                self.rect.center = center

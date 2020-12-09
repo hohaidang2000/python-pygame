@@ -95,6 +95,17 @@ class Game:
         self.splat = pg.image.load(img_folder+"/mobs/"+SPLAT ).convert_alpha()
         self.splat = pg.transform.scale(self.splat, (64,64))
 
+
+        #Explosion loadding
+        self.explosion_anin = {}
+        self.explosion_anin['lg'] = []
+        for i in range(9):
+            filename = 'regularExplosion0{}.png'.format(i)
+            img = pg.image.load(img_folder + "/explo/" + filename).convert_alpha()
+
+            img_lg = pg.transform.scale(img, (75, 75))
+            self.explosion_anin['lg'].append(img_lg)
+
         # sound loading
         pg.mixer.music.load(music_folder+"/"+BG_MUSIC)
         self.effects_sounds = {}
@@ -210,6 +221,7 @@ class Game:
             self.player.pos += vec(MOB_KNOCKBACK,0).rotate(-hits[0].rot)
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         check = 0
+
         for mob in hits:
             #hit.health -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
             if check == 0:
@@ -224,8 +236,11 @@ class Game:
                         mob.health -= WEAPONS[self.player.weapon]['damage']
                         mob.hit = 1
             else:
+
                 for bullet in hits[mob]:
                     mob.health -= bullet.damage
+                    expl = Explosion(mob.rect.center, 'lg',self.explosion_anin)
+                    self.all_sprites.add(expl)
                 for mob in self.mobs:
                     radius = mob.pos - pos
 
