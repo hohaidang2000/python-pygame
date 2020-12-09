@@ -54,12 +54,16 @@ class Player(pg.sprite.Sprite):
 
         self.currence_weapon = 0
         self.weapon_list =['pistol','bazuka']
+        self.weapons = []
+        for gun in self.weapon_list :
+            self.weapons.append(Gun(game,gun,self.pos))
+
 
         self.damaged = False
         pos = self.pos + vec(18, 13).rotate(-self.rot)
 
-        self.gun = Gun(self.game, self.weapon_list[self.currence_weapon],pos)
-
+        self.gun = self.weapons[self.currence_weapon]
+        self.gun.active = 1
         self.weaponchange()
 
         self.reload = 0
@@ -69,12 +73,13 @@ class Player(pg.sprite.Sprite):
     def add_gun(self,name):
         self.currence_weapon += 1
         self.weapon_list.append(name)
-
+        self.weapons.append(Gun(self.game, name, self.pos))
 
     def weaponchange(self):
 
-
-        self.gun.weaponchange(self.weapon_list[self.currence_weapon])
+        self.gun.active = 0
+        self.gun = self.weapons[self.currence_weapon]
+        self.gun.active = 1
 
 
     def get_angle(self, mouse):
@@ -164,7 +169,8 @@ class Player(pg.sprite.Sprite):
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
         # use hit_rect.center instead of pos because of the line above
-        self.gun.follow(self.hit_rect.center, self.rot)
+        for gun in self.weapons:
+            gun.follow(self.hit_rect.center, self.rot)
 
         if self.reload == 1:
             if self.gun.bullet_in_chamber < self.gun.max_bullets:
@@ -345,7 +351,7 @@ class Item(pg.sprite.Sprite):
 
 class Gun(pg.sprite.Sprite):
     def __init__(self, game, name,  pos):
-        self.groups = game.all_sprites
+        self.groups = game.all_sprites, game.Guns
         self._layer = PLAYER_LAYER
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
@@ -361,16 +367,15 @@ class Gun(pg.sprite.Sprite):
         self.pos = pos + vec(20,12)
         self.rect.center = pos + vec(20,12)
         self.rot = 0
-
-        self.weaponchange(self.weapon)
-
-
-
-    def weaponchange(self,name):
-        self.weapon= name
         self.bullet_in_chamber = WEAPONS[self.weapon]['max_bullets']
         self.max_bullets = WEAPONS[self.weapon]['max_bullets']
         self.megazine = WEAPONS[self.weapon]['left']
+
+        self.active = 0
+
+
+
+
 
 
     def follow(self,pos,rot):

@@ -144,6 +144,7 @@ class Game:
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
+        self.Guns = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
 
@@ -270,10 +271,16 @@ class Game:
 
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
         for sprite in self.all_sprites:
-            if isinstance(sprite, Mob):
-                sprite.draw_health()
+            if isinstance(sprite, Gun):
+                if sprite.active == 1:
+                    self.screen.blit(sprite.image, self.camera.apply(sprite))
 
-            self.screen.blit(sprite.image,self.camera.apply(sprite))
+            else:
+                if isinstance(sprite, Mob):
+                    sprite.draw_health()
+
+
+                self.screen.blit(sprite.image,self.camera.apply(sprite))
 
 
 
