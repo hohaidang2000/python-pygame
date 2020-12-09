@@ -71,9 +71,10 @@ class Player(pg.sprite.Sprite):
 
         self.weapon_change_time = pg.time.get_ticks()
     def add_gun(self,name):
-        self.currence_weapon += 1
+
         self.weapon_list.append(name)
         self.weapons.append(Gun(self.game, name, self.pos))
+        self.currence_weapon = len(self.weapons)-1
 
     def weaponchange(self):
 

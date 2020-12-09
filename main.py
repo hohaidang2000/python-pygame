@@ -293,8 +293,17 @@ class Game:
         draw_player_health(self.screen, 10,10,self.player.health / PLAYER_HEALTH)
         self.draw_text('Zombie: {}'.format(len(self.mobs)), self.hud_font, 30, WHITE,
                        WIDTH -10, 10, align="ne")
-        self.draw_text('{} / {}'.format(self.player.gun.bullet_in_chamber,self.player.gun.megazine),self.hud_font,30, WHITE,
-                       WIDTH/4, 0, align="ne")
+        self.draw_text('{} / {}'.format(self.player.gun.bullet_in_chamber,self.player.gun.megazine),self.hud_font,31, WHITE,
+                       WIDTH*3/16-50, HEIGHT*3/4 + 100, align="center")
+        self.draw_text('{} / {}'.format(self.player.gun.bullet_in_chamber, self.player.gun.megazine), self.hud_font, 30,
+                       BLACK,
+                       WIDTH * 3 / 16 - 50, HEIGHT * 3 / 4 + 100, align="center")
+        self.draw_text('{}'.format(self.player.gun.weapon), self.hud_font, 31,
+                       WHITE,
+                       WIDTH*3/16 -50, HEIGHT*3/4+50, align="center")
+        self.draw_text('{}'.format(self.player.gun.weapon), self.hud_font, 30,
+                       BLACK,
+                       WIDTH * 3 / 16 - 50, HEIGHT * 3 / 4 + 50, align="center")
         if self.pause:
             self.screen.blit(self.dim_image,(0,0))
             self.draw_text("Paused", self.title_font, 105, RED, WIDTH/2, HEIGHT/2, align="center")
