@@ -103,7 +103,7 @@ class Game:
             filename = 'regularExplosion0{}.png'.format(i)
             img = pg.image.load(img_folder + "/explo/" + filename).convert_alpha()
 
-            img_lg = pg.transform.scale(img, (75, 75))
+            img_lg = pg.transform.scale(img, (200, 200))
             self.explosion_anin['lg'].append(img_lg)
 
         # sound loading
@@ -228,19 +228,19 @@ class Game:
                 pos = vec(mob.pos)
                 check = 1
             if self.player.weapon_list[self.player.currence_weapon]=='bazuka':
-
+                expl = Explosion(mob.rect.center, 'lg', self.explosion_anin)
+                self.all_sprites.add(expl)
                 for mob in self.mobs:
                     radius =mob.pos - pos
 
-                    if 0<=abs(radius.length()) < 200:
-                        mob.health -= WEAPONS[self.player.weapon]['damage']
+                    if 0<=abs(radius.length()) < 100:
+                        mob.health -= WEAPONS[self.player.weapon_list[self.player.currence_weapon]]['damage']
                         mob.hit = 1
             else:
 
                 for bullet in hits[mob]:
                     mob.health -= bullet.damage
-                    expl = Explosion(mob.rect.center, 'lg',self.explosion_anin)
-                    self.all_sprites.add(expl)
+
                 for mob in self.mobs:
                     radius = mob.pos - pos
 

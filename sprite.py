@@ -53,7 +53,7 @@ class Player(pg.sprite.Sprite):
         self.rect.center = (x, y)
 
         self.currence_weapon = 0
-        self.weapon_list =['pistol']
+        self.weapon_list =['pistol','bazuka']
 
         self.damaged = False
         pos = self.pos + vec(18, 13).rotate(-self.rot)

@@ -77,7 +77,7 @@ WEAPONS['bazuka'] = {'bullet_speed': 400,
                       'bullet_count': 1,
                       'weapon_img':'weapon_gun.png',
                       'max_bullets': 1,
-                      'left': 30}
+                      'left': 3}
 
 # Mob
 MOB_IMG = "zoimbie1_hold.png"
