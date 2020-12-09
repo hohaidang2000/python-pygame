@@ -52,24 +52,35 @@ class Player(pg.sprite.Sprite):
         self.health = PLAYER_HEALTH
         self.rect.center = (x, y)
 
-        self.weapon = 'pistol'
-        self.last_shot = - WEAPONS[self.weapon]['rate']
+        self.currence_weapon = 0
+        self.weapon_list =['pistol']
+
         self.damaged = False
         pos = self.pos + vec(18, 13).rotate(-self.rot)
 
-        self.gun = Gun(self.game,pos)
+        self.gun = Gun(self.game, self.weapon_list[self.currence_weapon],pos)
 
         self.weaponchange()
+
         self.reload = 0
+        self.need_weapon = 0
+
+        self.weapon_change_time = pg.time.get_ticks()
+    def add_gun(self,name):
+        self.currence_weapon += 1
+        self.weapon_list.append(name)
+
+
     def weaponchange(self):
-        self.bullet_in_chamber = WEAPONS[self.weapon]['max_bullets']
-        self.max_bullets = WEAPONS[self.weapon]['max_bullets']
-        self.megazine = WEAPONS[self.weapon]['left']
+
+
+        self.gun.weaponchange(self.weapon_list[self.currence_weapon])
+
 
     def get_angle(self, mouse):
-        """
-        Find the new angle between the center of the Turret and the mouse.
-        """
+
+        #Find the new angle between the center of the Turret and the mouse.
+
 
         co = self.game.camera.cordinate() # get corniate of the camera from top left
 
@@ -101,37 +112,24 @@ class Player(pg.sprite.Sprite):
             self.vel += vec(0, PLAYER_SPEED)
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel = self.vel * 0.7071
+        if keys[pg.K_q]:
+            if pg.time.get_ticks()-self.weapon_change_time  >500:
+                self.currence_weapon +=1
+                if self.currence_weapon >= len(self.weapon_list):
+                    self.currence_weapon = 0
+                self.need_weapon = 1
+                self.weapon_change_time = pg.time.get_ticks()
+
         if mouse:
 
             self.get_angle(mouse.get_pos())
-        if moBut[0] and self.bullet_in_chamber > 0:#left click
+        if moBut[0] and self.gun.bullet_in_chamber > 0:#left click
 
 
-            self.shoot()
-
-
-    def shoot(self):
+            self.gun.shoot()
 
 
 
-        now = pg.time.get_ticks()
-        if now - self.last_shot > WEAPONS[self.weapon]['rate']:
-            self.last_shot = now
-            dir = vec(1, 0).rotate(-self.rot)
-            pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
-            self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
-            for i in range(WEAPONS[self.weapon]['bullet_count']):
-                spred = uniform(-WEAPONS[self.weapon]['spread'],WEAPONS[self.weapon]['spread'])
-                Bullet(self.game, pos, dir.rotate(spred), WEAPONS[self.weapon]['damage'])
-
-
-
-                snd = choice(self.game.weapon_sounds[self.weapon])
-                if snd.get_num_channels() > 2:
-                    snd.stop()
-                snd.play()
-            self.bullet_in_chamber -= 1
-            MuzzleFlash(self.game, pos)
 
     def add_health(self, amount):
         self.health += amount
@@ -169,17 +167,20 @@ class Player(pg.sprite.Sprite):
         self.gun.follow(self.hit_rect.center, self.rot)
 
         if self.reload == 1:
-            if self.bullet_in_chamber < self.max_bullets:
-                if self.megazine >= self.max_bullets:
-                    self.bullet_in_chamber += int(self.max_bullets)
-                    self.megazine -= int(self.max_bullets)
+            if self.gun.bullet_in_chamber < self.gun.max_bullets:
+                if self.gun.megazine >= self.gun.max_bullets:
+                    self.gun.megazine -= int(self.gun.max_bullets) - self.gun.bullet_in_chamber
+                    self.gun.bullet_in_chamber = int(self.gun.max_bullets)
+
                 else:
-                    self.bullet_in_chamber += int(self.megazine)
-                    self.megazine = 0
+                    self.gun.bullet_in_chamber += int(self.gun.megazine)
+                    self.gun.megazine = 0
 
-        self.reload = 0
+            self.reload = 0
 
-
+        if self.need_weapon == 1:
+            self.weaponchange()
+            self.need_weapon = 0
 
 class Mob(pg.sprite.Sprite):
     def __init__(self, game, x, y):
@@ -267,12 +268,12 @@ class Bullet(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.bullets
         pg.sprite.Sprite.__init__(self,self.groups)
         self.game = game
-        self.image = game.bullet_images[WEAPONS[game.player.weapon]['bullet_size']]
+        self.image = game.bullet_images[WEAPONS[game.player.weapon_list[game.player.currence_weapon]]['bullet_size']]
         self.rect = self.image.get_rect()
         self.pos = vec(pos)
         self.rect.center = pos
         #spread = uniform(-GUN_SPREAD,GUN_SPREAD)
-        self.vel = dir * WEAPONS[game.player.weapon]['bullet_speed'] * uniform(0.9,1.1)
+        self.vel = dir * WEAPONS[game.player.weapon_list[game.player.currence_weapon]]['bullet_speed'] * uniform(0.9,1.1)
         self.spawn_time = pg.time.get_ticks()
         self.hit_rect = self.rect
         self.damage = damage
@@ -281,7 +282,7 @@ class Bullet(pg.sprite.Sprite):
 
         self.pos += self.vel * self.game.dt
         self.rect.center = self.pos
-        if pg.time.get_ticks() - self.spawn_time > WEAPONS[self.game.player.weapon]['bullet_lifetime']:
+        if pg.time.get_ticks() - self.spawn_time > WEAPONS[self.game.player.weapon_list[self.game.player.currence_weapon]]['bullet_lifetime']:
             self.kill()
         if pg.sprite.spritecollideany(self, self.game.walls):
             self.kill()
@@ -343,17 +344,17 @@ class Item(pg.sprite.Sprite):
             self.dir *= -1
 
 class Gun(pg.sprite.Sprite):
-    def __init__(self, game, pos, angle=0):
+    def __init__(self, game, name,  pos):
         self.groups = game.all_sprites
         self._layer = PLAYER_LAYER
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.player_gun_img
-
+        self.weapon = name
 
         self.rect = self.image.get_rect()
 
-
+        self.last_shot = - WEAPONS[self.weapon]['rate']
 
 
         self.vel = vec(0, 0)
@@ -361,7 +362,15 @@ class Gun(pg.sprite.Sprite):
         self.rect.center = pos + vec(20,12)
         self.rot = 0
 
+        self.weaponchange(self.weapon)
 
+
+
+    def weaponchange(self,name):
+        self.weapon= name
+        self.bullet_in_chamber = WEAPONS[self.weapon]['max_bullets']
+        self.max_bullets = WEAPONS[self.weapon]['max_bullets']
+        self.megazine = WEAPONS[self.weapon]['left']
 
 
     def follow(self,pos,rot):
@@ -371,7 +380,28 @@ class Gun(pg.sprite.Sprite):
 
 
 
+    def shoot(self):
 
+
+
+        now = pg.time.get_ticks()
+        if now - self.last_shot > WEAPONS[self.weapon]['rate']:
+            self.last_shot = now
+            dir = vec(1, 0).rotate(-self.rot)
+            pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
+            self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
+            for i in range(WEAPONS[self.weapon]['bullet_count']):
+                spred = uniform(-WEAPONS[self.weapon]['spread'],WEAPONS[self.weapon]['spread'])
+                Bullet(self.game, pos, dir.rotate(spred), WEAPONS[self.weapon]['damage'])
+
+
+
+                snd = choice(self.game.weapon_sounds[self.weapon])
+                if snd.get_num_channels() > 2:
+                    snd.stop()
+                snd.play()
+            self.bullet_in_chamber -= 1
+            MuzzleFlash(self.game, pos)
 
     def update(self):
 

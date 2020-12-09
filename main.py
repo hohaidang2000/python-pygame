@@ -193,7 +193,7 @@ class Game:
             if hit.type == 'shotgun':
                 hit.kill()
                 self.effects_sounds['gun_pickup'].play()
-                self.player.weapon = 'shotgun'
+                self.player.add_gun('shotgun')
                 self.player.weaponchange()
         # mob hit player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
@@ -215,7 +215,7 @@ class Game:
             if check == 0:
                 pos = vec(mob.pos)
                 check = 1
-            if self.player.weapon =='bazuka':
+            if self.player.weapon_list[self.player.currence_weapon]=='bazuka':
 
                 for mob in self.mobs:
                     radius =mob.pos - pos
@@ -267,7 +267,7 @@ class Game:
         draw_player_health(self.screen, 10,10,self.player.health / PLAYER_HEALTH)
         self.draw_text('Zombie: {}'.format(len(self.mobs)), self.hud_font, 30, WHITE,
                        WIDTH -10, 10, align="ne")
-        self.draw_text('{} / {}'.format(self.player.bullet_in_chamber,self.player.megazine),self.hud_font,30, WHITE,
+        self.draw_text('{} / {}'.format(self.player.gun.bullet_in_chamber,self.player.gun.megazine),self.hud_font,30, WHITE,
                        WIDTH/4, 0, align="ne")
         if self.pause:
             self.screen.blit(self.dim_image,(0,0))
