@@ -300,7 +300,7 @@ class Bullet(pg.sprite.Sprite):
 
         self.pos += self.vel * self.game.dt
         self.rect.center = self.pos
-        if pg.time.get_ticks() - self.spawn_time > WEAPONS[self.game.player.weapon_list[self.game.player.currence_weapon]]['bullet_lifetime']:
+        if pg.time.get_ticks() - self.spawn_time > WEAPaONS[self.game.player.weapon_list[self.game.player.currence_weapon]]['bullet_lifetime']:
             self.kill()
         if pg.sprite.spritecollideany(self, self.game.walls):
             self.kill()
@@ -453,6 +453,8 @@ class Explosion(pg.sprite.Sprite):
                 self.image = self.explosion_anin[self.size][self.frame_now]
                 self.rect = self.image.get_rect()
                 self.rect.center = center
+
+
 class Leg(pg.sprite.Sprite):
     def __init__(self, game, anin, pos):
         self._layer = 1
@@ -491,7 +493,10 @@ class Leg(pg.sprite.Sprite):
     def follow(self,pos,rot):
 
         self.rot = rot%360
-        self.pos = pos
+        self.pos = vec(pos)
+
+
+
         self.update()
 
     def update(self):
