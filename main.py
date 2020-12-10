@@ -38,7 +38,7 @@ class Game:
         self.running = True
         self.level = 1
         self.LEVEL = LEVEL
-
+        self.score = 0
         self.load_data()
 
     def draw_text(self, text, font_name, size, color, x, y, align="nw"):
@@ -304,6 +304,11 @@ class Game:
         self.draw_text('{}'.format(self.player.gun.weapon), self.hud_font, 30,
                        BLACK,
                        WIDTH * 3 / 16 - 50, HEIGHT * 3 / 4 + 50, align="center")
+
+        self.draw_text('Score: {}'.format(self.score), self.hud_font, 31,
+                       WHITE,
+                       WIDTH - 200, 10, align="ne")
+
         if self.pause:
             self.screen.blit(self.dim_image,(0,0))
             self.draw_text("Paused", self.title_font, 105, RED, WIDTH/2, HEIGHT/2, align="center")
