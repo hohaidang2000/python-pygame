@@ -78,7 +78,8 @@ class Game:
         self.dim_image = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_image.fill((0,0,0,180))
 
-        self.player_img = pg.image.load(img_folder+"/player/"+ PLAYER_IMAGE).convert_alpha()
+        self.player_img = pg.image.load(img_folder+"/schoolgirl/"+ PLAYER_IMAGE2).convert_alpha()
+        self.player_img = pg.transform.rotate(self.player_img.copy(),-90)
         self.player_gun = "weapon_gun.png"
         self.player_gun_img = pg.image.load(img_folder+"/weapons/"+self.player_gun).convert_alpha()
 
@@ -105,6 +106,14 @@ class Game:
 
             img_lg = pg.transform.scale(img, (200, 200))
             self.explosion_anin['lg'].append(img_lg)
+
+        # leg loading
+        self.anin = []
+        for i in range(4):
+            filename = 'schoolgirl_legs_000{}.png'.format(i+1)
+            img = pg.image.load(img_folder +"/schoolgirl/"+filename ).convert_alpha()
+            img = pg.transform.rotate(img.copy(),-90)
+            self.anin.append(img)
 
         # sound loading
         pg.mixer.music.load(music_folder+"/"+BG_MUSIC)
@@ -245,6 +254,7 @@ class Game:
                             mob.hit = 1
                 else:
                     mob.health -= bullet.damage
+
 
                     for mob in self.mobs:
                         radius = mob.pos - pos

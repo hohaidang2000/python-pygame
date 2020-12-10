@@ -49,8 +49,12 @@ class Player(pg.sprite.Sprite):
         self.pos = vec(x, y)
         self.rot = 0
 
+
         self.health = PLAYER_HEALTH
         self.rect.center = (x, y)
+
+        self.leg = Leg(game,game.anin,self.rect.center)
+        self.leg.move()
 
         self.currence_weapon = 0
         self.weapon_list =['pistol','bazuka']
@@ -170,8 +174,13 @@ class Player(pg.sprite.Sprite):
         collide_with_walls(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
         # use hit_rect.center instead of pos because of the line above
+        self.leg.follow(self.hit_rect.center, self.rot)
         for gun in self.weapons:
             gun.follow(self.hit_rect.center, self.rot)
+
+        if self.vel.length()>0:
+            self.leg.move()
+
 
         if self.reload == 1:
             if self.gun.bullet_in_chamber < self.gun.max_bullets:
@@ -244,6 +253,7 @@ class Mob(pg.sprite.Sprite):
             self.acc += self.vel * -1
             self.vel += self.acc * self.game.dt
             self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
+
 
             self.hit_rect.centerx = self.pos.x
             collide_with_walls(self, self.game.walls, 'x')
@@ -365,10 +375,11 @@ class Gun(pg.sprite.Sprite):
         self.last_shot = - WEAPONS[self.weapon]['rate']
 
 
-        self.vel = vec(0, 0)
-        self.pos = pos + vec(20,12)
-        self.rect.center = pos + vec(20,12)
+
+        self.pos = pos
+        self.rect.center = pos
         self.rot = 0
+
         self.bullet_in_chamber = WEAPONS[self.weapon]['max_bullets']
         self.max_bullets = WEAPONS[self.weapon]['max_bullets']
         self.megazine = WEAPONS[self.weapon]['left']
@@ -383,7 +394,7 @@ class Gun(pg.sprite.Sprite):
     def follow(self,pos,rot):
 
         self.rot = rot%360
-        self.pos = pos + vec(20,12).rotate(-rot)
+        self.pos = pos + vec(30,5).rotate(-rot)
 
 
 
@@ -442,3 +453,51 @@ class Explosion(pg.sprite.Sprite):
                 self.image = self.explosion_anin[self.size][self.frame_now]
                 self.rect = self.image.get_rect()
                 self.rect.center = center
+class Leg(pg.sprite.Sprite):
+    def __init__(self, game, anin, pos):
+        self._layer = 1
+        self.groups = game.all_sprites
+        pg.sprite.Sprite.__init__(self,self.groups)
+
+        self.image = anin[0]
+        self.rect = self.image.get_rect()
+        self.pos = pos
+        self.rect.center = pos
+
+        self.frame_now = 0
+        self.last_update = pg.time.get_ticks()
+        self.frame_rate = 80
+        self.anin = anin
+        self.game = game
+
+
+        self.rot = 0
+
+        self.check = 0
+
+        self.moving = 0
+    def move(self):
+        now = pg.time.get_ticks()
+
+        if now - self.last_update > self.frame_rate:
+
+            self.last_update = now
+            self.frame_now += 1
+            if self.frame_now == len(self.anin):
+                self.frame_now = -1
+
+    def stop(self):
+        self.moving = 0
+    def follow(self,pos,rot):
+
+        self.rot = rot%360
+        self.pos = pos
+        self.update()
+
+    def update(self):
+
+
+
+        self.image = pg.transform.rotate(self.game.anin[self.frame_now].copy(), self.rot)
+        self.rect = self.image.get_rect()
+        self.rect.center = self.pos

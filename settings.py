@@ -34,6 +34,7 @@ LEVEL = [0,'level1.tmx','level2.tmx']
 
 PLAYER_SPEED = 300
 PLAYER_IMAGE = "manBlue_hold.png"
+PLAYER_IMAGE2 = "schoolgirl_torso_1h.png"
 PLAYER_ROT_SPEED = 250
 PLAYER_HIT_RECT = pg.Rect(0,0,35,35)
 BARREL_OFFSET = vec(30, 0)
@@ -49,12 +50,12 @@ WEAPONS['pistol'] = {'bullet_speed': 500,#how fast the bullet go
                      'rate': 250,# how fast can you shoot it
                      'kickback': 200,# push back
                      'spread': 5,# accuracy
-                     'damage': 100,
+                     'damage': 10,
                      'bullet_size': 'lg',
                      'bullet_count': 1,
                      'weapon_img':'weapon_gun.png',
-                     'max_bullets': 2,
-                     'left': 4,
+                     'max_bullets': 10,
+                     'left': 40,
                      }
 WEAPONS['shotgun'] = {'bullet_speed': 400,
                       'bullet_lifetime': 500,
