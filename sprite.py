@@ -74,6 +74,7 @@ class Player(pg.sprite.Sprite):
         self.need_weapon = 0
 
         self.weapon_change_time = pg.time.get_ticks()
+        self.weapons_reload_time = 0
     def add_gun(self,name):
 
         self.weapon_list.append(name)
@@ -108,6 +109,7 @@ class Player(pg.sprite.Sprite):
         moBut = mouse.get_pressed()
         if keys[pg.K_r]:
             self.reload = 1
+            self.weapons_reload_time = pg.time.get_ticks()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             # self.rot_speed = PLAYER_ROT_SPEED
             self.vel += vec(-PLAYER_SPEED, 0)
@@ -129,13 +131,19 @@ class Player(pg.sprite.Sprite):
                     self.currence_weapon = 0
                 self.need_weapon = 1
                 self.weapon_change_time = pg.time.get_ticks()
+                # cancel when change gun
+                self.weapons_reload_time = pg.time.get_ticks()
+                self.reload = 0
 
         if mouse:
 
             self.get_angle(mouse.get_pos())
         if moBut[0] and self.gun.bullet_in_chamber > 0:#left click
 
-
+            #cancel when shoot
+            self.weapons_reload_time = pg.time.get_ticks()
+            self.reload = 0
+            #shoot
             self.gun.shoot()
 
 
@@ -183,20 +191,23 @@ class Player(pg.sprite.Sprite):
 
 
         if self.reload == 1:
-            if self.gun.bullet_in_chamber < self.gun.max_bullets:
-                if self.gun.megazine >= self.gun.max_bullets:
-                    self.gun.megazine -= int(self.gun.max_bullets) - self.gun.bullet_in_chamber
-                    self.gun.bullet_in_chamber = int(self.gun.max_bullets)
+            if pg.time.get_ticks() - self.weapons_reload_time > 1000:
+                if self.gun.bullet_in_chamber < self.gun.max_bullets:
+                    if self.gun.megazine >= self.gun.max_bullets:
+                        self.gun.megazine -= int(self.gun.max_bullets) - self.gun.bullet_in_chamber
+                        self.gun.bullet_in_chamber = int(self.gun.max_bullets)
 
-                else:
-                    self.gun.bullet_in_chamber += int(self.gun.megazine)
-                    self.gun.megazine = 0
+                    else:
+                        self.gun.bullet_in_chamber += int(self.gun.megazine)
+                        self.gun.megazine = 0
 
-            self.reload = 0
+                self.reload = 0
 
         if self.need_weapon == 1:
             self.weaponchange()
             self.need_weapon = 0
+
+
 
 class Mob(pg.sprite.Sprite):
     def __init__(self, game, x, y):
