@@ -322,6 +322,8 @@ class Game:
             else:
                 if isinstance(sprite, Mob):
                     sprite.draw_health()
+                if isinstance(sprite, Mob2):
+                    sprite.draw_health()
 
                 self.screen.blit(sprite.image, self.camera.apply(sprite))
 

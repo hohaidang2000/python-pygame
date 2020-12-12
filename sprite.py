@@ -534,6 +534,7 @@ class Mob2(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.health = MOB_HEALTH
+
         self.speed = choice(MOB_SPEED)
         self.rect.center = (x,y)
         self.target = game.player
@@ -639,3 +640,4 @@ class Mob2(pg.sprite.Sprite):
         if self.health < MOB_HEALTH:
 
             pg.draw.rect(self.image, col, self.health_bar)
+
