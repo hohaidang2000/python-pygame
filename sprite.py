@@ -517,3 +517,109 @@ class Leg(pg.sprite.Sprite):
         self.image = pg.transform.rotate(self.game.anin[self.frame_now].copy(), self.rot)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
+
+class Mob2(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.mobs
+        self._layer = MOB_LAYER
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.mob2_img[0].copy() # FIX bug double image
+        self.rect = self.image.get_rect()
+        self.hit_rect = MOB_HIT_RECT.copy()
+        self.hit_rect.center = self.rect.center
+        self.pos = vec(x, y)
+        self.rect.center = self.pos
+        self.rot = 0
+        self.vel = vec(0, 0)
+        self.acc = vec(0, 0)
+        self.health = MOB_HEALTH
+        self.speed = choice(MOB_SPEED)
+        self.rect.center = (x,y)
+        self.target = game.player
+        self.hit = 0
+        self.damaged = False
+
+        self.frame_now = 0
+        self.last_update = pg.time.get_ticks()
+        self.frame_rate = 80
+
+        self.mob2_img = game.mob2_img
+
+    def avoid_mob(self):
+        for mob in self.game.mobs:
+            if mob != self:
+                dist = self.pos - mob.pos
+                if 0< dist.length() < AVOID_RADIUS:
+                    self.acc += dist.normalize()
+
+    def follow_the_damaged(self):
+        for mob in self.game.mobs:
+            if mob != self:
+                dist = self.pos - mob.pos
+                if mob.hit == 1 and  0< dist.length() < 75:
+                    self.hit = 1
+
+    def move(self):
+        now = pg.time.get_ticks()
+
+        if now - self.last_update > self.frame_rate:
+
+            self.last_update = now
+            self.frame_now += 1
+            if self.frame_now == len(self.mob2_img):
+                self.frame_now = -1
+
+    def stop(self):
+        self.moving = 0
+
+    def attact(self):
+        pass
+
+    def update(self):
+
+        target_dist = self.target.pos - self.pos
+        if target_dist.length_squared() < DETECT_RADIUS**2 or self.hit == 1:
+            # faster a bit
+            if random() <0.002:
+                choice(self.game.zombie_moan_sounds).play()
+            self.move()
+            self.rot = target_dist.angle_to(vec(1, 0))
+
+            self.image = pg.transform.rotate(self.game.mob2_img[self.frame_now], self.rot)
+            self.rect = self.image.get_rect()
+            self.rect.center = self.pos
+            self.acc = vec(1, 0).rotate(-self.rot)
+            self.avoid_mob()
+            self.acc.scale_to_length(self.speed)
+            self.acc += self.vel * -1
+            self.vel += self.acc * self.game.dt
+
+            self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
+
+
+            self.hit_rect.centerx = self.pos.x
+            collide_with_walls(self, self.game.walls, 'x')
+            self.hit_rect.centery = self.pos.y
+            collide_with_walls(self, self.game.walls, 'y')
+            self.rect.center = self.hit_rect.center
+        self.follow_the_damaged()
+
+        if self.health <=0:
+            choice(self.game.zombie_hit_sounds).play()
+            self.game.map_img.blit(self.game.splat, self.pos - vec(32,32))
+            self.game.score +=10 #up the score
+            self.kill()
+
+    def draw_health(self):
+        if self.health >60:
+            col = GREEN
+        elif self.health > 30:
+            col = YELLOW
+        else:
+            col = RED
+        width = int(self.rect.width*self.health / MOB_HEALTH)
+        self.health_bar = pg.Rect(0,0 , width, 7)
+        if self.health < MOB_HEALTH:
+
+            pg.draw.rect(self.image, col, self.health_bar)

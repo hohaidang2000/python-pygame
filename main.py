@@ -105,6 +105,20 @@ class Game:
         self.player_gun_img = pg.image.load(img_folder + "/weapons/" + self.player_gun).convert_alpha()
 
         self.mob_img = pg.image.load(img_folder + "/mobs/" + MOB_IMG).convert_alpha()
+        self.mob2_img =[]
+
+        for i in range(4):
+            filename = 'doctor_move_000{}.png'.format(i + 1)
+            img = pg.image.load(img_folder + "/Doctor/" + filename).convert_alpha()
+            img = pg.transform.rotate(img.copy(), -90)
+            self.mob2_img.append(img)
+        for i in range(2):
+            filename = 'doctor_attack_000{}.png'.format(i + 1)
+            img = pg.image.load(img_folder + "/Doctor/" + filename).convert_alpha()
+            img = pg.transform.rotate(img.copy(), -90)
+            self.mob2_img.append(img)
+
+
         self.bullet_images = {}
         self.bullet_images['lg'] = pg.image.load(img_folder + "/weapons/" + BULLET_IMG).convert_alpha()
         self.bullet_images['sm'] = pg.transform.scale(self.bullet_images['lg'], (10, 10))
@@ -185,6 +199,8 @@ class Game:
                 Mob(self, obj_center.x, obj_center.y)
             if tile_object.name in ['health', 'shotgun']:
                 Item(self, obj_center, tile_object.name)
+            if tile_object.name == 'doctor':
+                Mob2(self, obj_center.x, obj_center.y)
 
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
