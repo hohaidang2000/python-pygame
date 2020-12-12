@@ -37,7 +37,7 @@ PLAYER_IMAGE = "manBlue_hold.png"
 PLAYER_IMAGE2 = "schoolgirl_torso_1h.png"
 PLAYER_ROT_SPEED = 250
 PLAYER_HIT_RECT = pg.Rect(0,0,10,10)
-BARREL_OFFSET = vec(30, 0)
+BARREL_OFFSET = vec(25, 0)
 KICKBACK = 200
 PLAYER_HEALTH = 100
 
@@ -94,7 +94,7 @@ SPLAT = 'splat green.png'
 # Effects
 MUZZLE_FLASHES = ['whitePuff15.png', 'whitePuff16.png', 'whitePuff17.png',
                   'whitePuff18.png']
-FLASH_DURATION = 40
+FLASH_DURATION = 10
 DAMAGE_ALPHA = [i for i in range(0, 255, 55)]
 
 

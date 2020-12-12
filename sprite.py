@@ -75,6 +75,8 @@ class Player(pg.sprite.Sprite):
 
         self.weapon_change_time = pg.time.get_ticks()
         self.weapons_reload_time = 0
+
+        self.gun.shoot_flag = 0
     def add_gun(self,name):
 
         self.weapon_list.append(name)
@@ -144,7 +146,8 @@ class Player(pg.sprite.Sprite):
             self.weapons_reload_time = pg.time.get_ticks()
             self.reload = 0
             #shoot
-            self.gun.shoot()
+
+            self.gun.shoot_flag = 1
 
 
 
@@ -398,7 +401,7 @@ class Gun(pg.sprite.Sprite):
         self.active = 0
 
 
-
+        self.shoot_flag = 0
 
 
 
@@ -418,6 +421,7 @@ class Gun(pg.sprite.Sprite):
             self.last_shot = now
             dir = vec(1, 0).rotate(-self.rot)
             pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
+
             self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
             for i in range(WEAPONS[self.weapon]['bullet_count']):
                 spred = uniform(-WEAPONS[self.weapon]['spread'],WEAPONS[self.weapon]['spread'])
@@ -432,12 +436,16 @@ class Gun(pg.sprite.Sprite):
             self.bullet_in_chamber -= 1
             MuzzleFlash(self.game, pos)
 
+
+
     def update(self):
 
         self.image = pg.transform.rotate(self.game.player_gun_img.copy(), self.rot)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
-
+        if self.shoot_flag == 1:
+            self.shoot()
+            self.shoot_flag = 0
 
 class Explosion(pg.sprite.Sprite):
     def __init__(self, center, size, explosion_anin):
