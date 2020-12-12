@@ -105,18 +105,19 @@ class Game:
         self.player_gun_img = pg.image.load(img_folder + "/weapons/" + self.player_gun).convert_alpha()
 
         self.mob_img = pg.image.load(img_folder + "/mobs/" + MOB_IMG).convert_alpha()
-        self.mob2_img =[]
-
+        self.mob2_img = {}
+        self.mob2_img['attack'] = []
+        self.mob2_img['move'] = []
         for i in range(4):
             filename = 'doctor_move_000{}.png'.format(i + 1)
             img = pg.image.load(img_folder + "/Doctor/" + filename).convert_alpha()
             img = pg.transform.rotate(img.copy(), -90)
-            self.mob2_img.append(img)
+            self.mob2_img['move'].append(img)
         for i in range(2):
             filename = 'doctor_attack_000{}.png'.format(i + 1)
             img = pg.image.load(img_folder + "/Doctor/" + filename).convert_alpha()
             img = pg.transform.rotate(img.copy(), -90)
-            self.mob2_img.append(img)
+            self.mob2_img['attack'].append(img)
 
 
         self.bullet_images = {}

@@ -524,7 +524,7 @@ class Mob2(pg.sprite.Sprite):
         self._layer = MOB_LAYER
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.mob2_img[0].copy() # FIX bug double image
+        self.image = game.mob2_img['move'][0].copy() # FIX bug double image
         self.rect = self.image.get_rect()
         self.hit_rect = MOB_HIT_RECT.copy()
         self.hit_rect.center = self.rect.center
@@ -545,6 +545,8 @@ class Mob2(pg.sprite.Sprite):
         self.frame_rate = 80
 
         self.mob2_img = game.mob2_img
+        self.attact_flag = 0
+        self.attact_frame = -1
 
     def avoid_mob(self):
         for mob in self.game.mobs:
@@ -562,19 +564,29 @@ class Mob2(pg.sprite.Sprite):
 
     def move(self):
         now = pg.time.get_ticks()
+        if self.attact_flag == 1:
+            if now - self.last_update > self.frame_rate:
+                self.last_update = now
 
-        if now - self.last_update > self.frame_rate:
+                self.attact_frame +=1
+                if self.attact_frame == len(self.mob2_img['attack']):
+                    self.attact_flag = 0
+                    self.attact_frame = -1
+        else:
+            if now - self.last_update > self.frame_rate:
 
-            self.last_update = now
-            self.frame_now += 1
-            if self.frame_now == len(self.mob2_img):
-                self.frame_now = -1
+                self.last_update = now
+                self.frame_now += 1
+                if self.frame_now == len(self.mob2_img):
+                    self.frame_now = -1
 
     def stop(self):
         self.moving = 0
 
     def attact(self):
-        pass
+        if abs(self.pos.length() - self.target.pos.length()) <80:
+            self.attact_flag = 1
+
 
     def update(self):
 
@@ -583,10 +595,14 @@ class Mob2(pg.sprite.Sprite):
             # faster a bit
             if random() <0.002:
                 choice(self.game.zombie_moan_sounds).play()
-            self.move()
+            self.move()# update frame
+            self.attact()
+
             self.rot = target_dist.angle_to(vec(1, 0))
 
-            self.image = pg.transform.rotate(self.game.mob2_img[self.frame_now], self.rot)
+            self.image = pg.transform.rotate(self.game.mob2_img['move'][self.frame_now], self.rot)
+            if self.attact_flag == 1:
+                self.image = pg.transform.rotate(self.game.mob2_img['attack'][self.attact_frame], self.rot)
             self.rect = self.image.get_rect()
             self.rect.center = self.pos
             self.acc = vec(1, 0).rotate(-self.rot)
