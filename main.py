@@ -297,7 +297,7 @@ class Game:
             if check == 0:
                 pos = vec(mob.pos)
                 check = 1
-            mob.vel = 0
+            mob.vel = vec(0,0)
             for bullet in hits[mob]:
                 if bullet.damage == 555:
                     expl = Explosion(mob.rect.center, 'lg', self.explosion_anin)
@@ -314,7 +314,7 @@ class Game:
                     expl = Effect(mob.rect.center,bullet.rot,  self.blood_anin)
                     self.all_sprites.add(expl)
 
-                    mob.vel = -vec(500, 0).rotate(180-bullet.rot)
+                    mob.vel += -vec(30, 0).rotate(180-bullet.rot)
 
 
                 mob.hitted = 1
