@@ -53,7 +53,7 @@ WEAPONS['pistol'] = {'bullet_speed': 500,#how fast the bullet go
                      'damage': 10,
                      'bullet_size': 'lg',
                      'bullet_count': 1,
-                     'weapon_img':'weapon_gun.png',
+                     'weapon_img':'1h_smg.png',
                      'max_bullets': 10,
                      'left': 40,
                      }
@@ -65,7 +65,7 @@ WEAPONS['shotgun'] = {'bullet_speed': 400,
                       'damage': 5,
                       'bullet_size': 'sm',
                       'bullet_count': 12,
-                      'weapon_img':'weapon_gun.png',
+                      'weapon_img':'2h_shotgun.png',
                       'max_bullets': 4,
                       'left': 30}
 WEAPONS['bazuka'] = {'bullet_speed': 400,
@@ -76,7 +76,7 @@ WEAPONS['bazuka'] = {'bullet_speed': 400,
                       'damage': 555,
                       'bullet_size': 'lg',
                       'bullet_count': 1,
-                      'weapon_img':'weapon_gun.png',
+                      'weapon_img':'2h_rocket.png',
                       'max_bullets': 1,
                       'left': 3}
 

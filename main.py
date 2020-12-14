@@ -101,8 +101,17 @@ class Game:
 
         self.player_img = pg.image.load(img_folder + "/schoolgirl/" + PLAYER_IMAGE2).convert_alpha()
         self.player_img = pg.transform.rotate(self.player_img.copy(), -90)
-        self.player_gun = "weapon_gun.png"
-        self.player_gun_img = pg.image.load(img_folder + "/weapons/" + self.player_gun).convert_alpha()
+
+
+        self.player_guns_img ={}
+        for i in WEAPONS:
+            img = pg.image.load(img_folder + "/weapons/" + WEAPONS[i]['weapon_img']).convert_alpha()
+            img_rotate = pg.transform.rotate(img, -90)
+            self.player_guns_img[i] = img_rotate
+
+
+        #self.player_gun = "1h_pistol.png"
+        #self.player_gun_img = pg.image.load(img_folder + "/weapons/" + self.player_gun).convert_alpha()
 
         self.mob_img = pg.image.load(img_folder + "/mobs/" + MOB_IMG).convert_alpha()
         self.mob2_img = {}

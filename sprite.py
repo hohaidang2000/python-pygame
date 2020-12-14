@@ -57,7 +57,7 @@ class Player(pg.sprite.Sprite):
         self.leg.move()
 
         self.currence_weapon = 0
-        self.weapon_list =['pistol','bazuka']
+        self.weapon_list =['bazuka','pistol']
         self.weapons = []
         for gun in self.weapon_list :
             self.weapons.append(Gun(game,gun,self.pos))
@@ -382,7 +382,7 @@ class Gun(pg.sprite.Sprite):
         self._layer = PLAYER_LAYER
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.player_gun_img
+        self.image = game.player_guns_img[name]
         self.weapon = name
 
         self.rect = self.image.get_rect()
@@ -441,7 +441,7 @@ class Gun(pg.sprite.Sprite):
 
     def update(self):
 
-        self.image = pg.transform.rotate(self.game.player_gun_img.copy(), self.rot)
+        self.image = pg.transform.rotate(self.game.player_guns_img[self.weapon].copy(), self.rot)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
         if self.shoot_flag == 1:
