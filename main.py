@@ -98,11 +98,17 @@ class Game:
 
         self.dim_image = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_image.fill((0, 0, 0, 180))
+        self.player_img = {}
+        for i in range(3):
 
-        self.player_img = pg.image.load(img_folder + "/schoolgirl/" + PLAYER_IMAGE2).convert_alpha()
-        self.player_img = pg.transform.rotate(self.player_img.copy(), -90)
+
+            img = pg.image.load(img_folder + "/schoolgirl/" + 'schoolgirl_torso_{}.png'
+                                .format(PLAYER_IMAGE2[i])).convert_alpha()
+            img_rotate = pg.transform.rotate(img, -90)
+            self.player_img[i] = img_rotate
 
 
+        # loadding gun
         self.player_guns_img ={}
         for i in WEAPONS:
             img = pg.image.load(img_folder + "/weapons/" + WEAPONS[i]['weapon_img']).convert_alpha()

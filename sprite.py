@@ -36,7 +36,7 @@ class Player(pg.sprite.Sprite):
         self._layer = PLAYER_LAYER
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.player_img
+        self.image = game.player_img[0]
 
 
         self.rect = self.image.get_rect()
@@ -164,7 +164,7 @@ class Player(pg.sprite.Sprite):
         self.get_keys()
 
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
-        self.image = pg.transform.rotate(self.game.player_img, self.rot)
+        self.image = pg.transform.rotate(self.game.player_img[WEAPONS[self.gun.weapon]['hand']], self.rot)
         #self.gun_img = pg.transform.rotate(self.game.player_gun_img, self.rot)
         # self.image = pg.transform.rotate(self.game.player_img, self.angle)
         if self.damaged:
@@ -409,7 +409,7 @@ class Gun(pg.sprite.Sprite):
     def follow(self,pos,rot):
 
         self.rot = rot%360
-        self.pos = pos + vec(30,5).rotate(-rot)
+        self.pos = pos + WEAPONS[self.weapon]['pos'].rotate(-rot)
 
 
 

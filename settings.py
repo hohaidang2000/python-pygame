@@ -34,7 +34,7 @@ LEVEL = [0,'level1.tmx','level2.tmx']
 
 PLAYER_SPEED = 300
 PLAYER_IMAGE = "manBlue_hold.png"
-PLAYER_IMAGE2 = "schoolgirl_torso_1h.png"
+PLAYER_IMAGE2 = ['1h','2h','DW']
 PLAYER_ROT_SPEED = 250
 PLAYER_HIT_RECT = pg.Rect(0,0,10,10)
 BARREL_OFFSET = vec(25, 0)
@@ -56,6 +56,8 @@ WEAPONS['pistol'] = {'bullet_speed': 500,#how fast the bullet go
                      'weapon_img':'1h_smg.png',
                      'max_bullets': 10,
                      'left': 40,
+                     'hand':0,
+                     'pos': vec(26,4)
                      }
 WEAPONS['shotgun'] = {'bullet_speed': 400,
                       'bullet_lifetime': 500,
@@ -67,7 +69,9 @@ WEAPONS['shotgun'] = {'bullet_speed': 400,
                       'bullet_count': 12,
                       'weapon_img':'2h_shotgun.png',
                       'max_bullets': 4,
-                      'left': 30}
+                      'left': 30,
+                      'hand':1,
+                     'pos': vec(30,0)}
 WEAPONS['bazuka'] = {'bullet_speed': 400,
                       'bullet_lifetime':999999,
                       'rate': 900,
@@ -78,7 +82,9 @@ WEAPONS['bazuka'] = {'bullet_speed': 400,
                       'bullet_count': 1,
                       'weapon_img':'2h_rocket.png',
                       'max_bullets': 1,
-                      'left': 3}
+                      'left': 3,
+                      'hand':1,
+                      'pos': vec(20,7)}
 
 # Mob
 MOB_IMG = "zoimbie1_hold.png"
@@ -89,12 +95,12 @@ MOB_DAMAGE = 10
 MOB_KNOCKBACK = 20
 AVOID_RADIUS = 50
 DETECT_RADIUS = 400
-SPLAT = 'splat green.png'
+SPLAT = 'splat red.png'
 
 # Effects
 MUZZLE_FLASHES = ['whitePuff15.png', 'whitePuff16.png', 'whitePuff17.png',
                   'whitePuff18.png']
-FLASH_DURATION = 10
+FLASH_DURATION = 30
 DAMAGE_ALPHA = [i for i in range(0, 255, 55)]
 
 
