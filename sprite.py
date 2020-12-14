@@ -57,7 +57,7 @@ class Player(pg.sprite.Sprite):
         self.leg.move()
 
         self.currence_weapon = 0
-        self.weapon_list =['shotgun']
+        self.weapon_list =['pistol']
         self.weapons = []
         for gun in self.weapon_list :
             self.weapons.append(Gun(game,gun,self.pos))

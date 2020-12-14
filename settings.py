@@ -62,7 +62,7 @@ WEAPONS['pistol'] = {'bullet_speed': 500,#how fast the bullet go
 WEAPONS['shotgun'] = {'bullet_speed': 400,
                       'bullet_lifetime': 500,
                       'rate': 900,
-                      'kickback': 300,
+                      'kickback': 10000,
                       'spread': 20,
                       'damage': 5,
                       'bullet_size': 'sm',
