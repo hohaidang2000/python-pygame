@@ -314,7 +314,7 @@ class Game:
                     expl = Effect(mob.rect.center,bullet.rot,  self.blood_anin)
                     self.all_sprites.add(expl)
 
-                    mob.vel = -vec(100, 0).rotate(mob.rot)
+                    mob.vel = -vec(500, 0).rotate(180-bullet.rot)
 
 
                 mob.hitted = 1
