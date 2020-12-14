@@ -287,6 +287,7 @@ class Game:
         if hits:
             self.player.hit()
             self.player.pos += vec(MOB_KNOCKBACK, 0).rotate(-hits[0].rot)
+
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         check = 0
 
@@ -312,14 +313,10 @@ class Game:
                     mob.health -= bullet.damage
                     expl = Effect(mob.rect.center,bullet.rot,  self.blood_anin)
                     self.all_sprites.add(expl)
-                    for mob in self.mobs:
-                        radius = mob.pos - pos
 
-                        if abs(radius.length()) < 70:  # follow the sound
-                            mob.hit = 1
 
-            mob.vel = vec(0, 0)
-            mob.hit = 1
+                mob.vel = vec(0, 0)
+                mob.hit = 1
 
     def events(self):
         for event in pg.event.get():

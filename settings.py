@@ -71,7 +71,7 @@ WEAPONS['shotgun'] = {'bullet_speed': 400,
                       'max_bullets': 4,
                       'left': 30,
                       'hand':1,
-                     'pos': vec(30,0)}
+                     'pos': vec(22,5)}
 WEAPONS['bazuka'] = {'bullet_speed': 400,
                       'bullet_lifetime':999999,
                       'rate': 900,
