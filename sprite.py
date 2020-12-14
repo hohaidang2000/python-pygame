@@ -295,7 +295,7 @@ class Mob(pg.sprite.Sprite):
             pg.draw.rect(self.image, col, self.health_bar)
 
 class Bullet(pg.sprite.Sprite):
-    def __init__(self, game, pos, dir, damage) :
+    def __init__(self, game, pos, dir, damage,rot) :
         self._layer = BULLET_LAYER
         self.groups = game.all_sprites, game.bullets
         pg.sprite.Sprite.__init__(self,self.groups)
@@ -309,6 +309,7 @@ class Bullet(pg.sprite.Sprite):
         self.spawn_time = pg.time.get_ticks()
         self.hit_rect = self.rect
         self.damage = damage
+        self.rot = rot
 
     def update(self):
 
@@ -425,7 +426,7 @@ class Gun(pg.sprite.Sprite):
             self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
             for i in range(WEAPONS[self.weapon]['bullet_count']):
                 spred = uniform(-WEAPONS[self.weapon]['spread'],WEAPONS[self.weapon]['spread'])
-                Bullet(self.game, pos, dir.rotate(spred), WEAPONS[self.weapon]['damage'])
+                Bullet(self.game, pos, dir.rotate(spred), WEAPONS[self.weapon]['damage'],self.rot)
 
 
 
@@ -446,6 +447,36 @@ class Gun(pg.sprite.Sprite):
         if self.shoot_flag == 1:
             self.shoot()
             self.shoot_flag = 0
+
+class Effect(pg.sprite.Sprite):
+    def __init__(self, center, rot,  anin):
+        self._layer = 4
+        pg.sprite.Sprite.__init__(self)
+        #self.size = size
+        self.rot = rot
+
+
+        self.frame_now = 0
+        self.last_update = pg.time.get_ticks()
+        self.frame_rate = 35
+        self.anin = anin
+        self.image = pg.transform.rotate(self.anin[self.frame_now], 180+self.rot)
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+
+
+    def update(self):
+        now = pg.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+            self.frame_now += 1
+            if self.frame_now == len(self.anin):
+                self.kill()
+            else:
+                center = self.rect.center
+                self.image = pg.transform.rotate(self.anin[self.frame_now],180+self.rot)
+                self.rect = self.image.get_rect()
+                self.rect.center = center
 
 class Explosion(pg.sprite.Sprite):
     def __init__(self, center, size, explosion_anin):

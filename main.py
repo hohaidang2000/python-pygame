@@ -142,6 +142,14 @@ class Game:
             img_lg = pg.transform.scale(img, (200, 200))
             self.explosion_anin['lg'].append(img_lg)
 
+        # blood loadding
+        self.blood_anin = []
+        for i in range(6):
+            filename = 'blood_a_000{}.png'.format(i+1)
+            img = pg.image.load(img_folder + "/blood/" + filename).convert_alpha()
+            img_sm = pg.transform.scale(img,(80,80))
+            self.blood_anin.append(img_sm)
+
         # leg loading
         self.anin = []
         for i in range(4):
@@ -287,11 +295,12 @@ class Game:
                             mob.hit = 1
                 else:
                     mob.health -= bullet.damage
-
+                    expl = Effect(mob.rect.center,bullet.rot,  self.blood_anin)
+                    self.all_sprites.add(expl)
                     for mob in self.mobs:
                         radius = mob.pos - pos
 
-                        if 0 <= abs(radius.length()) < 70:  # follow the sound
+                        if abs(radius.length()) < 70:  # follow the sound
                             mob.hit = 1
 
             mob.vel = vec(0, 0)
