@@ -28,7 +28,7 @@ WALL_IMG = "/Tiles/tile_538.png"
 
 # level
 
-LEVEL = [0,'level1.tmx','level2.tmx']
+LEVEL = [0,'level5.tmx','level1.tmx','level2.tmx','level3.tmx','level4.tmx']
 
 # Player setttings
 
@@ -50,7 +50,7 @@ WEAPONS['pistol'] = {'bullet_speed': 500,#how fast the bullet go
                      'rate': 250,# how fast can you shoot it
                      'kickback': 200,# push back
                      'spread': 5,# accuracy
-                     'damage': 10,
+                     'damage': 100,
                      'bullet_size': 'lg',
                      'bullet_count': 1,
                      'weapon_img':'1h_smg.png',
@@ -97,6 +97,7 @@ AVOID_RADIUS = 50
 DETECT_RADIUS = 400
 SPLAT = 'splat red.png'
 
+BOSS_HEALTH = 5000
 # Effects
 MUZZLE_FLASHES = ['whitePuff15.png', 'whitePuff16.png', 'whitePuff17.png',
                   'whitePuff18.png']
@@ -115,7 +116,8 @@ ITEM_LAYER = 1
 
 # items
 ITEM_IMAGE = {'health': 'health_pack.png',
-              'shotgun':'obj_shotgun.png'}
+              'shotgun':'obj_shotgun.png',
+              'bazuka':'2h_rocket.png'}
 HEALTH_PACK_AMOUNT = 30
 BOB_RANGE = 15
 BOB_SPEED = 0.4

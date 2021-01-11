@@ -57,7 +57,7 @@ class Player(pg.sprite.Sprite):
         self.leg.move()
 
         self.currence_weapon = 0
-        self.weapon_list =['pistol','shotgun','bazuka']
+        self.weapon_list =game.weapon_list
         self.weapons = []
         for gun in self.weapon_list :
             self.weapons.append(Gun(game,gun,self.pos))
@@ -77,9 +77,12 @@ class Player(pg.sprite.Sprite):
         self.weapons_reload_time = 0
 
         self.gun.shoot_flag = 0
+
+    def new_pos(self,x,y):
+        self.pos = vec(x, y)
     def add_gun(self,name):
 
-        self.weapon_list.append(name)
+        self.weapon_list = self.game.weapon_list
         self.weapons.append(Gun(self.game, name, self.pos))
         self.currence_weapon = len(self.weapons)-1
 
@@ -209,8 +212,148 @@ class Player(pg.sprite.Sprite):
         if self.need_weapon == 1:
             self.weaponchange()
             self.need_weapon = 0
+class BossBoltStrike(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.mobs
+        self._layer = MOB_LAYER
+        self.game = game
+        self.image = game.mob2_img
+    def move(self):
+        pass
+    def update(self):
+        self.move()
+class Boss(pg.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.mobs
+        self._layer = MOB_LAYER
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = game.mob2_img['move'][0].copy() # FIX bug double image
+        self.rect = self.image.get_rect()
+        self.hit_rect = MOB_HIT_RECT.copy()
+        self.hit_rect.center = self.rect.center
+        self.pos = vec(x, y)
+        self.rect.center = self.pos
+        self.rot = 0
+        self.vel = vec(0, 0)
+        self.acc = vec(0, 0)
+        self.health = BOSS_HEALTH
+
+        self.speed = choice(MOB_SPEED)
+        self.rect.center = (x,y)
+        self.target = game.player
+        self.hitted = 0
+        self.damaged = False
+
+        self.frame_now = 0
+        self.last_update = pg.time.get_ticks()
+        self.frame_rate = 80
+
+        self.mob2_img = game.mob2_img
+        self.attact_flag = 0
+        self.attact_frame = -1
+        self.sp_flag = 0
+        self.sp_frame = -1
 
 
+    def move(self):
+        now = pg.time.get_ticks()
+        if self.sp_flag == 1:
+
+            if now - self.last_update > self.frame_rate+20:
+                self.last_update = now
+
+                self.sp_frame += 1
+                if self.sp_frame == len(self.mob2_img['spmove']):
+                    self.sp_flag = 0
+                    self.sp_frame = -1
+
+        else:
+            if self.attact_flag == 1:
+                if now - self.last_update > self.frame_rate:
+                    self.last_update = now
+
+                    self.attact_frame +=1
+                    if self.attact_frame == len(self.mob2_img['attack']):
+                        self.attact_flag = 0
+                        self.attact_frame = -1
+            else:
+                if now - self.last_update > self.frame_rate:
+
+                    self.last_update = now
+                    self.frame_now += 1
+                    if self.frame_now == len(self.mob2_img):
+                        self.frame_now = -1
+
+    def stop(self):
+        self.moving = 0
+
+    def attact(self):
+        if abs(self.pos.length() - self.target.pos.length()) <80:
+            self.attact_flag = 1
+
+
+    def MoveSet(self):
+        self.game.player.health -= 5
+    def update(self):
+
+        target_dist = self.target.pos - self.pos
+
+        # faster a bit
+        self.hitted = 1
+        if random() <0.002:
+            choice(self.game.zombie_moan_sounds).play()
+
+        if random() <0.01:
+            self.sp_flag = 1
+
+        self.move()# update frame
+        self.attact()
+
+        self.rot = target_dist.angle_to(vec(1, 0))
+
+        self.image = pg.transform.rotate(self.game.mob2_img['move'][self.frame_now], self.rot)
+        if self.sp_flag == 1:
+            self.image = pg.transform.rotate(self.game.mob2_img['spmove'][self.attact_frame], self.rot)
+            self.MoveSet()
+        else:
+            if self.attact_flag == 1:
+                self.image = pg.transform.rotate(self.game.mob2_img['attack'][self.attact_frame], self.rot)
+            self.rect = self.image.get_rect()
+            self.rect.center = self.pos
+            self.acc = vec(1, 0).rotate(-self.rot)
+
+            self.acc.scale_to_length(self.speed)
+            self.acc += self.vel * -1
+            self.vel += self.acc * self.game.dt
+            self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
+
+
+            self.hit_rect.centerx = self.pos.x
+            collide_with_walls(self, self.game.walls, 'x')
+            self.hit_rect.centery = self.pos.y
+            collide_with_walls(self, self.game.walls, 'y')
+            self.rect.center = self.hit_rect.center
+
+
+        if self.health <=0:
+            choice(self.game.zombie_hit_sounds).play()
+            self.game.map_img.blit(self.game.splat, self.pos - vec(32,32))
+            self.game.score +=10 #up the score
+            self.kill()
+
+    def draw_health(self):
+        if self.health >BOSS_HEALTH/2:
+            col = GREEN
+        elif self.health > BOSS_HEALTH/4:
+            col = YELLOW
+        else:
+            col = RED
+        width = int(self.rect.width*self.health / BOSS_HEALTH)
+        self.health_bar = pg.Rect(0,0 , width, 7)
+        if self.health < BOSS_HEALTH:
+
+            pg.draw.rect(self.image, col, self.health_bar)
 class Mob2(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.mobs

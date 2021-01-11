@@ -123,6 +123,9 @@ class Game:
         self.mob2_img = {}
         self.mob2_img['attack'] = []
         self.mob2_img['move'] = []
+        self.mob2_img['spmove'] = []
+        self.mob2_img['boltStrike'] = []
+        self.mob2_img['battery'] = []
         for i in range(4):
             filename = 'doctor_move_000{}.png'.format(i + 1)
             img = pg.image.load(img_folder + "/Doctor/" + filename).convert_alpha()
@@ -133,6 +136,27 @@ class Game:
             img = pg.image.load(img_folder + "/Doctor/" + filename).convert_alpha()
             img = pg.transform.rotate(img.copy(), -90)
             self.mob2_img['attack'].append(img)
+        for i in range(2):
+            filename = 'doctor_summon_000{}.png'.format(i + 1)
+            img = pg.image.load(img_folder + "/Doctor/" + filename).convert_alpha()
+            img = pg.transform.rotate(img.copy(), -90)
+            self.mob2_img['spmove'].append(img)
+        for i in range(9):
+            filename = 'bolt_strike_000{}.png'.format(i + 1)
+            img = pg.image.load(img_folder + "/Doctor/bolt_strike/" + filename).convert_alpha()
+
+            self.mob2_img['boltStrike'].append(img)
+        filename = ' bolt_strike_0010.png'
+        img = pg.image.load(img_folder + "/Doctor/bolt_strike/" + filename).convert_alpha()
+
+        self.mob2_img['boltStrike'].append(img)
+
+        for i in range(2):
+            filename = 'battery_000{}.png'.format(i + 1)
+            img = pg.image.load(img_folder + "/Doctor/battery/" + filename).convert_alpha()
+
+            self.mob2_img['battery'].append(img)
+
 
 
         self.bullet_images = {}
@@ -199,7 +223,7 @@ class Game:
         self.zombie_hit_sounds = []
         for snd in ZOMBIE_HIT_SOUNDS:
             self.zombie_hit_sounds.append(pg.mixer.Sound(snd_folder + "/" + snd))
-
+        self.weapon_list = ['pistol']
     def new(self):
         # reset the game
 
@@ -209,10 +233,9 @@ class Game:
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
+        self.items = pg.sprite.Group()
         self.Guns = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
-        self.items = pg.sprite.Group()
-
         for tile_object in self.map.tmxdata.objects:
             obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
@@ -221,10 +244,12 @@ class Game:
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             if tile_object.name == 'zombie':
                 Mob(self, obj_center.x, obj_center.y)
-            if tile_object.name in ['health', 'shotgun']:
+            if tile_object.name in ['health', 'shotgun','bazuka']:
                 Item(self, obj_center, tile_object.name)
             if tile_object.name == 'doctor':
                 Mob2(self, obj_center.x, obj_center.y)
+            if tile_object.name == 'boss1':
+                Boss(self, obj_center.x, obj_center.y)
 
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
@@ -269,10 +294,12 @@ class Game:
                 hit.kill()
                 self.effects_sounds['health_up'].play()
                 self.player.add_health(HEALTH_PACK_AMOUNT)
-            if hit.type == 'shotgun':
+
+            if hit.type in ['shotgun','bazuka']:
                 hit.kill()
                 self.effects_sounds['gun_pickup'].play()
-                self.player.add_gun('shotgun')
+                self.weapon_list.append(hit.type)
+                self.player.add_gun(hit.type)
                 self.player.weaponchange()
         # mob hit player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
@@ -346,6 +373,10 @@ class Game:
                     sprite.draw_health()
                 if isinstance(sprite, Mob2):
                     sprite.draw_health()
+                if isinstance(sprite, Boss):
+                    sprite.draw_health()
+
+
 
                 self.screen.blit(sprite.image, self.camera.apply(sprite))
 
@@ -414,6 +445,11 @@ class Game:
                        100, RED, WIDTH / 2, HEIGHT / 2, align="center")
         self.draw_text("Press a key to start", self.title_font,
                        75, WHITE, WIDTH / 2, HEIGHT * 3 / 4, align="center")
+
+        self.draw_text("SCORE " + str(self.score), self.title_font,
+                       75, WHITE, WIDTH / 2, HEIGHT * 1 / 5, align="center")
+        self.score = 0
+        self.level = 1
         pg.display.flip()
         pg.event.wait()
         self.wait_for_key()
