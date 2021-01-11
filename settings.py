@@ -85,6 +85,8 @@ WEAPONS['bazuka'] = {'bullet_speed': 400,
                       'left': 3,
                       'hand':1,
                       'pos': vec(20,7)}
+# BOLT
+BOLT_DAMAGE = 30
 
 # Mob
 MOB_IMG = "zoimbie1_hold.png"

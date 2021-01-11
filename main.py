@@ -141,12 +141,14 @@ class Game:
             img = pg.image.load(img_folder + "/Doctor/" + filename).convert_alpha()
             img = pg.transform.rotate(img.copy(), -90)
             self.mob2_img['spmove'].append(img)
+            self.mob2_img['spmove'].append(img)
+            self.mob2_img['spmove'].append(img)
         for i in range(9):
             filename = 'bolt_strike_000{}.png'.format(i + 1)
             img = pg.image.load(img_folder + "/Doctor/bolt_strike/" + filename).convert_alpha()
 
             self.mob2_img['boltStrike'].append(img)
-        filename = ' bolt_strike_0010.png'
+        filename = 'bolt_strike_0010.png'
         img = pg.image.load(img_folder + "/Doctor/bolt_strike/" + filename).convert_alpha()
 
         self.mob2_img['boltStrike'].append(img)

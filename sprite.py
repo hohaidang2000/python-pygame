@@ -213,15 +213,43 @@ class Player(pg.sprite.Sprite):
             self.weaponchange()
             self.need_weapon = 0
 class BossBoltStrike(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.mobs
+
+    def __init__(self, game,pos):
+        self.groups = game.all_sprites
         self._layer = MOB_LAYER
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.mob2_img
+        self.mob2_img = game.mob2_img['boltStrike']
+        self.image = game.mob2_img['boltStrike'][0]
+        self.rect = self.image.get_rect()
+        self.pos = vec(pos)
+        self.rect.center = self.pos
+        self.hit_rect = self.rect
+        self.damage = BOLT_DAMAGE
+
+
+        self.strike_time = 100
+        self.frame_now = 0
+        self.last_update = pg.time.get_ticks()
+        self.frame_rate = 60
+        print("ok")
     def move(self):
-        pass
+        now = pg.time.get_ticks()
+        if now - self.last_update > self.frame_rate:
+            self.last_update = now
+
+            self.frame_now += 1
+            if self.frame_now == 10:
+                self.frame_now = -1
+                self.kill()
+
     def update(self):
         self.move()
+        self.image = self.game.mob2_img['boltStrike'][self.frame_now]
+        self.rect = self.image.get_rect()
+
+
+
 class Boss(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.mobs
@@ -248,41 +276,42 @@ class Boss(pg.sprite.Sprite):
         self.frame_now = 0
         self.last_update = pg.time.get_ticks()
         self.frame_rate = 80
+        self.sp_rate = 100
 
         self.mob2_img = game.mob2_img
         self.attact_flag = 0
         self.attact_frame = -1
+
         self.sp_flag = 0
         self.sp_frame = -1
 
 
     def move(self):
         now = pg.time.get_ticks()
-        if self.sp_flag == 1:
-
-            if now - self.last_update > self.frame_rate+20:
-                self.last_update = now
-
-                self.sp_frame += 1
-                if self.sp_frame == len(self.mob2_img['spmove']):
-                    self.sp_flag = 0
-                    self.sp_frame = -1
-
-        else:
-            if self.attact_flag == 1:
-                if now - self.last_update > self.frame_rate:
+        if now - self.last_update > self.frame_rate:
+            if self.sp_flag == 1:
+                self.attact_flag = 0
+                if now - self.last_update >  self.frame_rate :
                     self.last_update = now
 
+                    self.sp_frame += 1
+                    if self.sp_frame == len(self.mob2_img['spmove']):
+                        self.sp_flag = 0
+                        self.sp_frame = -1
+
+
+            if self.attact_flag == 1 and self.sp_flag == 0:
+
+                    self.last_update = now
                     self.attact_frame +=1
                     if self.attact_frame == len(self.mob2_img['attack']):
                         self.attact_flag = 0
                         self.attact_frame = -1
             else:
-                if now - self.last_update > self.frame_rate:
 
                     self.last_update = now
                     self.frame_now += 1
-                    if self.frame_now == len(self.mob2_img):
+                    if self.frame_now == len(self.mob2_img['move']):
                         self.frame_now = -1
 
     def stop(self):
@@ -294,7 +323,7 @@ class Boss(pg.sprite.Sprite):
 
 
     def MoveSet(self):
-        self.game.player.health -= 5
+        BossBoltStrike(self.game,self.game.player.rect.center)
     def update(self):
 
         target_dist = self.target.pos - self.pos
@@ -304,9 +333,9 @@ class Boss(pg.sprite.Sprite):
         if random() <0.002:
             choice(self.game.zombie_moan_sounds).play()
 
-        if random() <0.01:
+        if random() <0.01 and self.sp_flag == 0:
             self.sp_flag = 1
-
+            self.MoveSet()
         self.move()# update frame
         self.attact()
 
@@ -314,21 +343,18 @@ class Boss(pg.sprite.Sprite):
 
         self.image = pg.transform.rotate(self.game.mob2_img['move'][self.frame_now], self.rot)
         if self.sp_flag == 1:
-            self.image = pg.transform.rotate(self.game.mob2_img['spmove'][self.attact_frame], self.rot)
-            self.MoveSet()
+            self.image = pg.transform.rotate(self.game.mob2_img['spmove'][self.sp_frame], self.rot)
+
         else:
-            if self.attact_flag == 1:
+            if self.attact_flag == 1 and self.sp_flag == 0:
                 self.image = pg.transform.rotate(self.game.mob2_img['attack'][self.attact_frame], self.rot)
             self.rect = self.image.get_rect()
             self.rect.center = self.pos
             self.acc = vec(1, 0).rotate(-self.rot)
-
             self.acc.scale_to_length(self.speed)
             self.acc += self.vel * -1
             self.vel += self.acc * self.game.dt
             self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
-
-
             self.hit_rect.centerx = self.pos.x
             collide_with_walls(self, self.game.walls, 'x')
             self.hit_rect.centery = self.pos.y
