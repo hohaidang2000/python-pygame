@@ -6,6 +6,7 @@ from  random import  uniform,choice,randint, random
 import  pytweening as tween
 from  itertools import  chain
 
+
 vec = pg.math.Vector2
 
 
@@ -212,26 +213,33 @@ class Player(pg.sprite.Sprite):
         if self.need_weapon == 1:
             self.weaponchange()
             self.need_weapon = 0
+
 class BossBoltStrike(pg.sprite.Sprite):
 
-    def __init__(self, game,pos):
-        self.groups = game.all_sprites
+    def __init__(self, game, pos, dir,rot):
+        self.groups = game.all_sprites,game.projectile
         self._layer = MOB_LAYER
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.mob2_img = game.mob2_img['boltStrike']
         self.image = game.mob2_img['boltStrike'][0]
+        self.hit_box = game.mob2_img['hit_box']
         self.rect = self.image.get_rect()
-        self.pos = vec(pos)
+        self.no = vec(pos) + vec(250,40).rotate(-rot)
+        self.pos = vec(pos) + vec(250,40).rotate(-rot)
         self.rect.center = self.pos
-        self.hit_rect = self.rect
-        self.damage = BOLT_DAMAGE
+        self.hit_rect = self.hit_box.get_rect()
+        self.hit_rect.center = self.rect.center
+        self.hit = 1
 
+        self.vel = dir * 50000000
+        self.rot = rot
 
-        self.strike_time = 100
+        #self.strike_time = 100
         self.frame_now = 0
         self.last_update = pg.time.get_ticks()
-        self.frame_rate = 60
+        self.frame_rate = 80
+
         print("ok")
     def move(self):
         now = pg.time.get_ticks()
@@ -245,8 +253,14 @@ class BossBoltStrike(pg.sprite.Sprite):
 
     def update(self):
         self.move()
-        self.image = self.game.mob2_img['boltStrike'][self.frame_now]
+        self.image = pg.transform.rotate(self.game.mob2_img['boltStrike'][self.frame_now].copy(), self.rot-90)
+
         self.rect = self.image.get_rect()
+        self.rect.center = self.no
+        self.pos += self.vel * self.game.dt
+
+        self.hit_rect.center = self.pos
+
 
 
 
@@ -323,7 +337,9 @@ class Boss(pg.sprite.Sprite):
 
 
     def MoveSet(self):
-        BossBoltStrike(self.game,self.game.player.rect.center)
+        dir = vec(1, 0).rotate(-self.rot)
+        rot = self.rot%360
+        self.bos = BossBoltStrike(self.game,self.pos,dir,rot)
     def update(self):
 
         target_dist = self.target.pos - self.pos
@@ -333,7 +349,7 @@ class Boss(pg.sprite.Sprite):
         if random() <0.002:
             choice(self.game.zombie_moan_sounds).play()
 
-        if random() <0.01 and self.sp_flag == 0:
+        if random() <0.002 and self.sp_flag == 0:
             self.sp_flag = 1
             self.MoveSet()
         self.move()# update frame

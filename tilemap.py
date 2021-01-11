@@ -4,7 +4,8 @@ import  pytmx #read the tile map
 
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
-
+def collide_hit_rect_only(one, two):
+    return one.hit_rect.colliderect(two.hit_rect)
 class Map:
     def __init__(self, filename):
         self.data = []

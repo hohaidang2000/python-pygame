@@ -158,7 +158,9 @@ class Game:
             img = pg.image.load(img_folder + "/Doctor/battery/" + filename).convert_alpha()
 
             self.mob2_img['battery'].append(img)
-
+        filename = "bolt_strike_hitbox.png"
+        img = pg.image.load(img_folder + "/Doctor/bolt_strike/" + filename).convert_alpha()
+        self.mob2_img['hit_box'] = img
 
 
         self.bullet_images = {}
@@ -238,6 +240,7 @@ class Game:
         self.items = pg.sprite.Group()
         self.Guns = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
+        self.projectile = pg.sprite.Group()
         for tile_object in self.map.tmxdata.objects:
             obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
@@ -306,6 +309,7 @@ class Game:
         # mob hit player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
+
             if random() < 0.7:
                 choice(self.player_hit_sounds).play()
             self.player.health -= MOB_DAMAGE
@@ -316,7 +320,20 @@ class Game:
         if hits:
             self.player.hit()
             self.player.pos += vec(MOB_KNOCKBACK, 0).rotate(-hits[0].rot)
+        hits = pg.sprite.spritecollide(self.player, self.projectile,False,collide_hit_rect_only)
 
+        for hit in hits:
+
+            if random() < 0.7:
+                choice(self.player_hit_sounds).play()
+            self.player.health -= BOLT_DAMAGE
+            hit.vel = vec(0, 0)
+            if self.player.health <= 0:
+                self.playing = False
+                self.show_go_screen()
+        if hits:
+            self.player.hit()
+            self.player.pos += vec(MOB_KNOCKBACK, 0).rotate(-hits[0].rot)
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         check = 0
 
@@ -328,7 +345,7 @@ class Game:
                 check = 1
             mob.vel = vec(0,0)
             for bullet in hits[mob]:
-                if bullet.damage == 555:
+                if bullet.damage == WEAPONS['bazuka']['damage']:
                     expl = Explosion(mob.rect.center, 'lg', self.explosion_anin)
                     self.all_sprites.add(expl)
 
@@ -362,6 +379,7 @@ class Game:
                     self.pause = not self.pause
 
     def draw(self):
+
         pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
 
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))

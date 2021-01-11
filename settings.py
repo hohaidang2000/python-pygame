@@ -86,8 +86,8 @@ WEAPONS['bazuka'] = {'bullet_speed': 400,
                       'hand':1,
                       'pos': vec(20,7)}
 # BOLT
-BOLT_DAMAGE = 30
-
+BOLT_DAMAGE = 0.7
+BOLT_RECT = pg.Rect(0,0,10,10)
 # Mob
 MOB_IMG = "zoimbie1_hold.png"
 MOB_SPEED = [200,400,350,250,125]
