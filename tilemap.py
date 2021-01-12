@@ -1,11 +1,16 @@
 import pygame as pg
 from settings import *
-import  pytmx #read the tile map
+import pytmx  # read the tile map
+
 
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
+
+
 def collide_hit_rect_only(one, two):
     return one.hit_rect.colliderect(two.hit_rect)
+
+
 class Map:
     def __init__(self, filename):
         self.data = []
@@ -17,6 +22,7 @@ class Map:
         self.tileheight = len(self.data)
         self.width = self.tilewidth * TILESIZE
         self.height = self.tileheight * TILESIZE
+
 
 class TiledMap:
     def __init__(self, filename):
@@ -40,6 +46,7 @@ class TiledMap:
         self.render(temp_surface)
         return temp_surface
 
+
 class Camera:
     def __init__(self, width, height):
         self.camera = pg.Rect(0, 0, width, height)
@@ -50,10 +57,13 @@ class Camera:
 
     def apply(self, entity):
         return entity.rect.move(self.camera.topleft)
+
     def apply_rect(self, rect):
         return rect.move(self.camera.topleft)
+
     def cordinate(self):
-        return (self.cx,self.cy)
+        return (self.cx, self.cy)
+
     def update(self, target):
         x = -target.rect.centerx + int(WIDTH / 2)
         y = -target.rect.centery + int(HEIGHT / 2)
