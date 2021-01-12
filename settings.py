@@ -43,7 +43,7 @@ PLAYER_HEALTH = 100
 
 
 # Weapon settings
-BULLET_IMG = '/bullet.png'
+BULLET_IMG = 'bullet.png'
 WEAPONS = {}
 WEAPONS['pistol'] = {'bullet_speed': 500,#how fast the bullet go
                      'bullet_lifetime': 10000,#how long it exists
