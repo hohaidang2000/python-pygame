@@ -88,7 +88,9 @@ class Game:
         self.screen.blit(text_surface, text_rect)
 
     def load_data(self):
+
         game_folder = path.dirname(__file__)
+        self.dir = game_folder
         img_folder = game_folder + "/PNG"
         self.map_folder = game_folder + "/maps"
         snd_folder = game_folder + "/snd"
@@ -96,6 +98,11 @@ class Game:
         self.title_font = game_folder + "/font/ZOMBIE.TTF"
         self.hud_font = game_folder + "/font/Impacted2.0.ttf"
 
+        with open(path.join(game_folder, SCORE), 'r') as f:
+            try:
+                self.highscore = int(f.read())
+            except:
+                self.highscore = 0
         self.dim_image = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_image.fill((0, 0, 0, 180))
         self.player_img = {}
@@ -231,9 +238,6 @@ class Game:
     def new(self):
         # reset the game
 
-        self.map = TiledMap(self.map_folder + "/" + self.LEVEL[self.level])
-        self.map_img = self.map.make_map()
-        self.map_rect = self.map_img.get_rect()
         self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
@@ -241,21 +245,38 @@ class Game:
         self.Guns = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
         self.projectile = pg.sprite.Group()
+        self.map = TiledMap(self.map_folder + "/" + self.LEVEL[self.level])
+        self.map_img = self.map.make_map()
+        self.map_rect = self.map_img.get_rect()
         for tile_object in self.map.tmxdata.objects:
-            obj_center = vec(tile_object.x + tile_object.width / 2, tile_object.y + tile_object.height / 2)
+            obj_center = vec(tile_object.x + tile_object.width / 2,
+                             tile_object.y + tile_object.height / 2)
+            if tile_object.name == 'wall':
+                Obstacle(self, tile_object.x, tile_object.y,
+                         tile_object.width, tile_object.height)
+
+
+        for tile_object in self.map.tmxdata.objects:
+            obj_center = vec(tile_object.x + tile_object.width / 2,
+                             tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
                 self.player = Player(self, obj_center.x, obj_center.y)
-            if tile_object.name == 'wall':
-                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+
+        for tile_object in self.map.tmxdata.objects:
+            obj_center = vec(tile_object.x + tile_object.width / 2,
+                             tile_object.y + tile_object.height / 2)
+
             if tile_object.name == 'zombie':
                 Mob(self, obj_center.x, obj_center.y)
+
+            if tile_object.name in ['health', 'shotgun']:
+                Item(self, obj_center, tile_object.name)
             if tile_object.name in ['health', 'shotgun','bazuka']:
                 Item(self, obj_center, tile_object.name)
             if tile_object.name == 'doctor':
                 Mob2(self, obj_center.x, obj_center.y)
             if tile_object.name == 'boss1':
                 Boss(self, obj_center.x, obj_center.y)
-
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
         self.effects_sounds['level_start'].play()
@@ -364,6 +385,11 @@ class Game:
 
 
                 mob.hitted = 1
+        if self.score > self.highscore:
+            self.highscore = self.score
+            with open(path.join(self.dir, SCORE), 'w') as f:
+
+                    f.write(str(self.score))
 
     def events(self):
         for event in pg.event.get():
@@ -421,6 +447,10 @@ class Game:
                        WHITE,
                        WIDTH - 200, 10, align="ne")
 
+        self.draw_text('High Score: {}'.format(self.highscore), self.hud_font, 31,
+                       WHITE,
+                       WIDTH - 500, 10, align="ne")
+
         x,y =self.camera.cordinate()
         if self.player.reload == 1 :
             draw_reload_time(self.screen,self.player.pos.x-x-40,self.player.pos.y-y-30,(pg.time.get_ticks()-self.player.weapons_reload_time)/1000)
@@ -468,6 +498,8 @@ class Game:
 
         self.draw_text("SCORE " + str(self.score), self.title_font,
                        75, WHITE, WIDTH / 2, HEIGHT * 1 / 5, align="center")
+        self.draw_text("HIGH SCORE " + str(self.highscore), self.title_font,
+                       75, WHITE, WIDTH / 2, HEIGHT * 2 / 6, align="center")
         self.score = 0
         self.level = 1
         pg.display.flip()

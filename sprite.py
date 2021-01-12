@@ -349,7 +349,7 @@ class Boss(pg.sprite.Sprite):
         if random() <0.002:
             choice(self.game.zombie_moan_sounds).play()
 
-        if random() <0.002 and self.sp_flag == 0:
+        if random() <0.005 and self.sp_flag == 0:
             self.sp_flag = 1
             self.MoveSet()
         self.move()# update frame
@@ -457,7 +457,7 @@ class Mob2(pg.sprite.Sprite):
 
                 self.last_update = now
                 self.frame_now += 1
-                if self.frame_now == len(self.mob2_img):
+                if self.frame_now == len(self.mob2_img['move']):
                     self.frame_now = -1
 
     def stop(self):
@@ -559,7 +559,7 @@ class Mob(pg.sprite.Sprite):
         for mob in self.game.mobs:
             if mob != self:
                 dist = self.pos - mob.pos
-                if mob.hitted == 1 and  0< dist.length() < 75:
+                if mob.hitted == 1 and  0< dist.length() < 150:
                     self.hitted = 1
 
 

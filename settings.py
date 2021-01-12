@@ -5,7 +5,7 @@ TITLE ="Cry and Wipe"
 WIDTH = 1024 # 16 *64 or 32*32 or 64 * 16
 HEIGHT = 768 # 16*48 or 32*24 or 64 * 12
 FPS = 60
-
+SCORE = "score.txt"
 
 # define colors
 WHITE = (255, 255, 255)
@@ -28,7 +28,7 @@ WALL_IMG = "/Tiles/tile_538.png"
 
 # level
 
-LEVEL = [0,'level5.tmx','level1.tmx','level2.tmx','level3.tmx','level4.tmx']
+LEVEL = [0,'level1.tmx','level2.tmx','level3.tmx','level4.tmx','level5.tmx']
 
 # Player setttings
 
@@ -86,7 +86,7 @@ WEAPONS['bazuka'] = {'bullet_speed': 400,
                       'hand':1,
                       'pos': vec(20,7)}
 # BOLT
-BOLT_DAMAGE = 0.7
+BOLT_DAMAGE = 0.4
 BOLT_RECT = pg.Rect(0,0,10,10)
 # Mob
 MOB_IMG = "zoimbie1_hold.png"
