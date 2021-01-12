@@ -6,6 +6,10 @@ from sprite import *
 import os
 from os import path
 from tilemap import *
+import pytmx  # read the tile map
+from  random import  uniform,choice,randint, random
+import  pytweening as tween
+from  itertools import  chain
 
 vec = pg.math.Vector2
 import math
@@ -59,7 +63,7 @@ class Game:
         self.clock = pg.time.Clock()
         # pg.key.set_repeat(500,100)
         self.running = True
-        self.level = 1
+        self.level = 0
         self.LEVEL = LEVEL
         self.score = 0
         self.load_data()
@@ -309,10 +313,11 @@ class Game:
         if len(self.mobs) == 0:
             self.playing = False
             # try to fix the quick start maybe i should add a timer
-
             self.level += 1
+
+
             if self.level == len(LEVEL):
-                self.level = 1
+                self.level = 0
             self.next_screen()
         # player hit item
 
@@ -464,7 +469,7 @@ class Game:
 
     def show_start_screen(self):
         self.screen.fill(BLACK)
-        level = "level " + str(self.level)
+        level = "level " + str(int(self.level+1))
         self.draw_text("Start", self.title_font,
                        100, RED, WIDTH / 2, HEIGHT * 1 / 4, align="center")
         self.draw_text(level, self.title_font,
@@ -478,7 +483,7 @@ class Game:
     def next_screen(self):
 
         self.screen.fill(BLACK)
-        level = "level " + str(self.level)
+        level = "level " + str(self.level+1)
         self.draw_text("Start", self.title_font,
                        100, RED, WIDTH / 2, HEIGHT * 1 / 4, align="center")
         self.draw_text(level, self.title_font,
@@ -503,7 +508,7 @@ class Game:
         self.draw_text("HIGH SCORE " + str(self.highscore), self.title_font,
                        75, WHITE, WIDTH / 2, HEIGHT * 2 / 6, align="center")
         self.score = 0
-        self.level = 1
+        self.level = 0
         pg.display.flip()
         pg.event.wait()
         self.wait_for_key()
@@ -530,5 +535,5 @@ while True:
     g.new()
     g.run()
     # g.show_go_screen()
-input()
+
 g.quit()

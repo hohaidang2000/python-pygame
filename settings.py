@@ -28,7 +28,7 @@ WALL_IMG = "/Tiles/tile_538.png"
 
 # level
 
-LEVEL = [0,'level1.tmx','level2.tmx','level3.tmx','level4.tmx','level5.tmx']
+LEVEL = ['level1.tmx','level2.tmx','level3.tmx','level4.tmx','level5.tmx']
 
 # Player setttings
 
